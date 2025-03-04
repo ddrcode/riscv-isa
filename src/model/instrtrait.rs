@@ -1,5 +1,5 @@
-use crate::opcode::Opcode;
-use crate::format::InstructionFormat;
+use super::Opcode;
+use super::InstructionFormat;
 
 pub trait InstructionTrait {
     fn get_opcode(&self) -> &Opcode;

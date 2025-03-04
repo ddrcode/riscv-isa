@@ -1,4 +1,4 @@
-use crate::format::InstructionFormat;
+use crate::model::InstructionFormat;
 
 #[derive(Debug)]
 pub enum RISCVError {

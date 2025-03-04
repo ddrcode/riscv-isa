@@ -1,16 +1,16 @@
-use std::fmt::{ Display, Formatter };
 use std::fmt;
+use std::fmt::{Display, Formatter};
 
-use crate::opcode::Opcode;
 use crate::error::RISCVError;
-use crate::format::InstructionFormat;
-use crate::instrtrait::InstructionTrait;
-use crate::rtype::RInstruction;
-use crate::stype::SInstruction;
+use super::InstructionFormat;
+use super::InstructionTrait;
+use super::Opcode;
+use super::RInstruction;
+use super::SInstruction;
 
 pub enum Instruction {
     R(RInstruction),
-    S(SInstruction)
+    S(SInstruction),
 }
 
 impl TryFrom<u32> for Instruction {
@@ -22,7 +22,7 @@ impl TryFrom<u32> for Instruction {
         let instruction = match InstructionFormat::try_from(instr)? {
             R => Instruction::R(RInstruction::try_from(instr)?),
             S => Instruction::S(SInstruction::try_from(instr)?),
-            _ => unreachable!()
+            _ => unreachable!(),
         };
 
         Ok(instruction)
@@ -45,14 +45,12 @@ macro_rules! delegate_instruction_methods {
     };
 }
 
-
 delegate_instruction_methods!(Instruction, InstructionTrait,
     fn get_opcode(&self) -> &Opcode,
     fn get_format(&self) -> &InstructionFormat,
     fn get_mnemonic(&self) -> &str,
     fn is_compressed(&self) -> bool
 );
-
 
 // delegate_instruction_methods!(Instruction, Display,
 //     fn fmt(&self, f: &mut Formatter) -> Result

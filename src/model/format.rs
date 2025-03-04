@@ -1,6 +1,6 @@
 use std::fmt;
 use crate::error::*;
-use crate::opcode::OPCODE_MASK;
+use super::OPCODE_MASK;
 
 #[derive(Debug, PartialEq)]
 pub enum InstructionFormat {

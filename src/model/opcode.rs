@@ -1,6 +1,6 @@
 use std::fmt;
 use crate::error::RISCVError;
-use crate::format::InstructionFormat;
+use super::InstructionFormat;
 
 pub const OPCODE_MASK: u32 = 0b1111111;
 

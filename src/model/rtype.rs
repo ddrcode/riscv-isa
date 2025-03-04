@@ -1,11 +1,11 @@
 use std::fmt;
 
-use crate::opcode::Opcode;
-use crate::instrtrait::InstructionTrait;
-use crate::format::InstructionFormat;
 use crate::error::RISCVError;
-use crate::register::Register;
-use crate::funct::{ Funct3, Funct7 };
+use super::Opcode;
+use super::InstructionTrait;
+use super::InstructionFormat;
+use super::Register;
+use super::{ Funct3, Funct7 };
 
 pub struct RInstruction {
     opcode: Opcode,
