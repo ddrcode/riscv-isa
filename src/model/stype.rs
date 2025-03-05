@@ -1,18 +1,14 @@
 use std::fmt;
 
 use crate::error::RISCVError;
-use super::Opcode;
-use super::InstructionFormat;
-use super::InstructionTrait;
-use super::Register;
-use super::Funct3;
-
+use super::{ Opcode, InstructionFormat, InstructionTrait, Register, Funct3, Immediate };
 
 pub struct SInstruction {
     opcode: Opcode,
     rs1: Register,
     rs2: Register,
-    funct3: Funct3
+    funct3: Funct3,
+    imm: Immediate
 }
 
 impl InstructionTrait for SInstruction {
@@ -47,6 +43,6 @@ impl TryFrom<u32> for SInstruction {
 
 impl fmt::Display for SInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "???")
+        write!(f, "{} {} {}", self.get_mnemonic(), self.rs1, self.rs2)
     }
 }
