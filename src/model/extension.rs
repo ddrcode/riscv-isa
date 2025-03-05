@@ -1,12 +1,20 @@
 pub enum RISCVExtension {
     I,
     Zifencei,
-    Zicsr,
     M,
     A,
     F,
     D,
     Q,
+    H,
+    Sstc,
+    Svadu,
+    Zawrs,
+    Zicbom,
+    Zicboz,
+    Zicntr,
+    Zicsr,
+    Zihpm,
     Zfh,
     Custom
 }

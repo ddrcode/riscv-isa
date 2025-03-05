@@ -1,8 +1,11 @@
+#[macro_use]
+extern crate lazy_static;
+
 mod error;
 mod model;
+mod data;
 
 use model::Instruction;
-use model::InstructionFormat;
 use model::InstructionTrait;
 use model::RInstruction;
 
@@ -15,4 +18,6 @@ fn main() {
 
     let instr = RInstruction::try_from(bits).unwrap();
     println!("R: {}", instr);
+
+
 }

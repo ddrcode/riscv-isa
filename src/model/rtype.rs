@@ -1,11 +1,13 @@
 use std::fmt;
 
-use crate::error::RISCVError;
-use super::Opcode;
-use super::InstructionTrait;
 use super::InstructionFormat;
+use super::InstructionTrait;
+use super::Opcode;
 use super::Register;
-use super::{ Funct3, Funct7 };
+use super::{Funct3, Funct7};
+use crate::error::RISCVError;
+
+use crate::data::get_mnemonic;
 
 pub struct RInstruction {
     opcode: Opcode,
@@ -13,7 +15,7 @@ pub struct RInstruction {
     rs2: Register,
     rd: Register,
     funct3: Funct3,
-    funct7: Funct7
+    funct7: Funct7,
 }
 
 impl InstructionTrait for RInstruction {
@@ -26,13 +28,7 @@ impl InstructionTrait for RInstruction {
     }
 
     fn get_mnemonic(&self) -> &str {
-        let ident: (u8, u8, u8) = (self.opcode.into(), self.funct3.into(), self.funct7.into());
-        match ident {
-            (0b0110011, 0b000, 0b0000000) => "add",
-            (0b0110011, 0b000, 0b0100000) => "sub",
-            (0b0110011, 0b111, 0b0000000) => "and",
-            _ => "???"
-        }
+        get_mnemonic(self.opcode, Some(self.funct3), Some(self.funct7)).unwrap_or("???")
     }
 }
 
@@ -53,7 +49,7 @@ impl TryFrom<u32> for RInstruction {
             rs2: Register::into_rs2(instr),
             rd: Register::into_rd(instr),
             funct3: Funct3::from(instr),
-            funct7: Funct7::from(instr)
+            funct7: Funct7::from(instr),
         })
     }
 }
@@ -72,10 +68,16 @@ impl From<RInstruction> for u32 {
 
 impl fmt::Display for RInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} {}, {}, {}", self.get_mnemonic(), self.rd, self.rs1, self.rs2)
+        write!(
+            f,
+            "{} {}, {}, {}",
+            self.get_mnemonic(),
+            self.rd,
+            self.rs1,
+            self.rs2
+        )
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -89,8 +91,8 @@ mod test {
     #[test]
     fn test_two_way_conversion() {
         assert_instr(0b00000000_10110101_00000101_00111011);
-        assert_instr(0x00028533);  // add a0, t0, zero
-        assert_instr(0x02b504b3);  // mul s1, a0, a1
-        assert_instr(0x00b574b3);  // and s1, a0, a1
+        assert_instr(0x00028533); // add a0, t0, zero
+        assert_instr(0x02b504b3); // mul s1, a0, a1
+        assert_instr(0x00b574b3); // and s1, a0, a1
     }
 }
