@@ -1,11 +1,12 @@
 use std::fmt;
 
-use super::{Funct3, Immediate, InstructionFormat, InstructionTrait, Opcode, Register};
+use super::InstructionTrait;
+use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
-use crate::config::UNKNOWN_MNEMONIC;
+use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, Register};
 
-pub struct SInstruction {
+pub struct BInstruction {
     opcode: Opcode,
     rs1: Register,
     rs2: Register,
@@ -13,7 +14,7 @@ pub struct SInstruction {
     imm: Immediate<12>,
 }
 
-impl InstructionTrait for SInstruction {
+impl InstructionTrait for BInstruction {
     fn get_opcode(&self) -> &Opcode {
         &self.opcode
     }
@@ -27,18 +28,18 @@ impl InstructionTrait for SInstruction {
     }
 }
 
-impl TryFrom<u32> for SInstruction {
+impl TryFrom<u32> for BInstruction {
     type Error = RISCVError;
 
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = Opcode::try_from(instr)?;
         let format = opcode.get_format();
 
-        if format != InstructionFormat::R {
+        if format != InstructionFormat::S {
             return Err(RISCVError::UnexpectedFormat(format));
         }
 
-        let imm_val = (instr >> 7) & 0b11111 | ((instr >> 25) << 5);
+        let imm_val = i32::from_le_bytes(((instr >> 7) & 0b11111 | ((instr >> 25) << 5)).to_le_bytes());
         let imm = Immediate::<12>::try_from(imm_val)?;
 
         Ok(Self {
@@ -51,15 +52,16 @@ impl TryFrom<u32> for SInstruction {
     }
 }
 
-impl fmt::Display for SInstruction {
+impl fmt::Display for BInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{} {}, {}, {}",
+            "{} {}, {}({})",
             self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
-            self.rs1,
             self.rs2,
-            self.imm
+            self.imm,
+            self.rs1
         )
     }
 }
+

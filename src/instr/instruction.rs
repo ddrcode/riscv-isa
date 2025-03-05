@@ -1,16 +1,15 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
+use super::*;
 use crate::error::RISCVError;
-use super::InstructionFormat;
-use super::InstructionTrait;
-use super::Opcode;
-use super::RInstruction;
-use super::SInstruction;
+use crate::model::{InstructionFormat, Opcode};
 
 pub enum Instruction {
     R(RInstruction),
+    I(IInstruction),
     S(SInstruction),
+    B(BInstruction),
 }
 
 impl TryFrom<u32> for Instruction {
@@ -21,11 +20,25 @@ impl TryFrom<u32> for Instruction {
 
         let instruction = match InstructionFormat::try_from(instr)? {
             R => Instruction::R(RInstruction::try_from(instr)?),
+            I => Instruction::I(IInstruction::try_from(instr)?),
             S => Instruction::S(SInstruction::try_from(instr)?),
+            B => Instruction::B(BInstruction::try_from(instr)?),
             _ => unreachable!(),
         };
 
         Ok(instruction)
+    }
+}
+
+impl fmt::Display for Instruction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        use Instruction::*;
+        match self {
+            R(instr) => write!(f, "{}", instr),
+            I(instr) => write!(f, "{}", instr),
+            S(instr) => write!(f, "{}", instr),
+            B(instr) => write!(f, "{}", instr),
+        }
     }
 }
 
@@ -36,7 +49,9 @@ macro_rules! delegate_instruction_methods {
                 fn $fn_name(&self) -> $ret {
                     match self {
                         $enum_name::R(inner) => inner.$fn_name(),
+                        $enum_name::I(inner) => inner.$fn_name(),
                         $enum_name::S(inner) => inner.$fn_name(),
+                        $enum_name::B(inner) => inner.$fn_name(),
                         // $enum_name::I(inner) => inner.$fn_name(),
                     }
                 }
@@ -52,7 +67,3 @@ delegate_instruction_methods!(Instruction, InstructionTrait,
     fn is_compressed(&self) -> bool
 );
 
-// delegate_instruction_methods!(Instruction, Display,
-//     fn fmt(&self, f: &mut Formatter) -> Result
-// );
-//

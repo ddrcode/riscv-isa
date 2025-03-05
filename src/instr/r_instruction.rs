@@ -1,10 +1,10 @@
 use std::fmt;
 
-use super::InstructionFormat;
 use super::InstructionTrait;
-use super::Opcode;
-use super::Register;
-use super::{Funct3, Funct7};
+use crate::model::InstructionFormat;
+use crate::model::Opcode;
+use crate::model::Register;
+use crate::model::{Funct3, Funct7};
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::error::RISCVError;
 

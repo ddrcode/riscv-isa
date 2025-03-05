@@ -5,10 +5,10 @@ mod error;
 mod model;
 mod data;
 mod config;
+mod instr;
 
-use model::Instruction;
-use model::InstructionTrait;
-use model::RInstruction;
+use instr::Instruction;
+use instr::InstructionTrait;
 
 fn main() {
     let bits: u32 = 0x00b574b3;
@@ -16,9 +16,9 @@ fn main() {
     println!("Format {}", instr.get_format());
     println!("Opcode {}", instr.get_opcode());
     println!("Compressed {}", instr.is_compressed());
-
-    let instr = RInstruction::try_from(bits).unwrap();
-    println!("R: {}", instr);
+    println!("{}", instr);
 
 
+    println!("{}", Instruction::try_from(0x1ea5af23).unwrap());
+    println!("{}", Instruction::try_from(0x80040293).unwrap());
 }

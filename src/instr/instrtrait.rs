@@ -1,7 +1,5 @@
 use crate::config::UNKNOWN_MNEMONIC;
-
-use super::InstructionFormat;
-use super::Opcode;
+use crate::model::{InstructionFormat, Opcode};
 
 pub trait InstructionTrait {
     fn get_opcode(&self) -> &Opcode;
