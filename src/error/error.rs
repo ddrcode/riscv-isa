@@ -6,5 +6,6 @@ pub enum RISCVError {
     UnrecognizedInstructionFormat,
     UnexpectedFormat(InstructionFormat),
     InvalidFunct3Value,
-    InvalidFunct7Value
+    InvalidFunct7Value,
+    ImmediateTooBig(u8)
 }

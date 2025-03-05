@@ -48,7 +48,7 @@ macro_rules! delegate_instruction_methods {
 delegate_instruction_methods!(Instruction, InstructionTrait,
     fn get_opcode(&self) -> &Opcode,
     fn get_format(&self) -> &InstructionFormat,
-    fn get_mnemonic(&self) -> &str,
+    fn get_mnemonic(&self) -> Option<&str>,
     fn is_compressed(&self) -> bool
 );
 

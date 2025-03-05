@@ -4,6 +4,7 @@ extern crate lazy_static;
 mod error;
 mod model;
 mod data;
+mod config;
 
 use model::Instruction;
 use model::InstructionTrait;

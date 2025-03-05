@@ -5,6 +5,7 @@ use super::InstructionTrait;
 use super::Opcode;
 use super::Register;
 use super::{Funct3, Funct7};
+use crate::config::UNKNOWN_MNEMONIC;
 use crate::error::RISCVError;
 
 use crate::data::get_mnemonic;
@@ -27,8 +28,8 @@ impl InstructionTrait for RInstruction {
         &InstructionFormat::R
     }
 
-    fn get_mnemonic(&self) -> &str {
-        get_mnemonic(self.opcode, Some(self.funct3), Some(self.funct7)).unwrap_or("???")
+    fn get_mnemonic(&self) -> Option<&str> {
+        get_mnemonic(self.opcode, Some(self.funct3), Some(self.funct7))
     }
 }
 
@@ -71,7 +72,7 @@ impl fmt::Display for RInstruction {
         write!(
             f,
             "{} {}, {}, {}",
-            self.get_mnemonic(),
+            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
             self.rd,
             self.rs1,
             self.rs2
