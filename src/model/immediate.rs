@@ -8,6 +8,8 @@ impl<const START: u8, const END: u8> TryFrom<i32> for Immediate<START, END> {
     type Error = RISCVError;
 
     fn try_from(imm: i32) -> Result<Self, Self::Error> {
+        assert!(START <= END && END < 32, "Invalid immediate field bit positions");
+
         let width = END - START;
         let (max, min) = if END == 31 {
             (i32::MAX, i32::MIN)
