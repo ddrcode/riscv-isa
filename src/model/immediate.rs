@@ -93,7 +93,7 @@ impl<const START: u8, const END: u8> From<&Immediate<START, END>> for i32 {
 
 impl<const START: u8, const END: u8> fmt::Display for Immediate<START, END> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "0x{:x}", i32::from(self))
+        write!(f, "0x{:x}", self.into_raw_bits())
     }
 }
 

@@ -10,6 +10,7 @@ pub enum Instruction {
     I(IInstruction),
     S(SInstruction),
     B(BInstruction),
+    U(UInstruction),
 }
 
 impl TryFrom<u32> for Instruction {
@@ -23,6 +24,7 @@ impl TryFrom<u32> for Instruction {
             I => Instruction::I(IInstruction::try_from(instr)?),
             S => Instruction::S(SInstruction::try_from(instr)?),
             B => Instruction::B(BInstruction::try_from(instr)?),
+            U => Instruction::U(UInstruction::try_from(instr)?),
             _ => unreachable!(),
         };
 
@@ -38,6 +40,7 @@ impl fmt::Display for Instruction {
             I(instr) => write!(f, "{}", instr),
             S(instr) => write!(f, "{}", instr),
             B(instr) => write!(f, "{}", instr),
+            U(instr) => write!(f, "{}", instr),
         }
     }
 }
@@ -52,7 +55,7 @@ macro_rules! delegate_instruction_methods {
                         $enum_name::I(inner) => inner.$fn_name(),
                         $enum_name::S(inner) => inner.$fn_name(),
                         $enum_name::B(inner) => inner.$fn_name(),
-                        // $enum_name::I(inner) => inner.$fn_name(),
+                        $enum_name::U(inner) => inner.$fn_name(),
                     }
                 }
             )*

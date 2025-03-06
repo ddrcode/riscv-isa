@@ -31,6 +31,7 @@ impl TryFrom<u8> for InstructionFormat {
             0b11011 => Ok(J),
             0b01100 | 0b01011 | 0b01110 => Ok(R),
             0b01000 => Ok(S),
+            0b01101 => Ok(U),
             _ => Err(RISCVError::UnrecognizedInstructionFormat)
         }
     }

@@ -5,6 +5,7 @@ use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
 use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register};
+use crate::utils::bit::{copy_bit, copy_bits};
 
 pub struct BInstruction {
     opcode: Opcode,
@@ -14,13 +15,24 @@ pub struct BInstruction {
     imm: Immediate<1, 12>,
 }
 
+fn get_raw_imm(instr: &u32) -> u32 {
+    let mut res = 0u32;
+
+    copy_bits(instr, 8, &mut res, 1, 4);
+    copy_bits(instr, 25, &mut res, 5, 6);
+    copy_bit(instr, 7, &mut res, 11);
+    copy_bit(instr, 31, &mut res, 12);
+
+    res
+}
+
 impl InstructionTrait for BInstruction {
     fn get_opcode(&self) -> &Opcode {
         &self.opcode
     }
 
     fn get_format(&self) -> &InstructionFormat {
-        &InstructionFormat::S
+        &InstructionFormat::B
     }
 
     fn get_mnemonic(&self) -> Option<&str> {
@@ -35,11 +47,11 @@ impl TryFrom<u32> for BInstruction {
         let opcode = Opcode::try_from(instr)?;
         let format = opcode.get_format();
 
-        if format != InstructionFormat::S {
+        if format != InstructionFormat::B {
             return Err(RISCVError::UnexpectedFormat(format));
         }
 
-        let imm_val = (instr >> 7) & 0b11111 | ((instr >> 25) << 5);
+        let imm_val = get_raw_imm(&instr);
         let imm = Immediate::<1, 12>::try_from_raw_bits(imm_val)?;
 
         Ok(Self {
@@ -56,11 +68,11 @@ impl fmt::Display for BInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{} {}, {}({})",
+            "{} {}, {}, {}",
             self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
+            self.rs1,
             self.rs2,
-            self.imm,
-            self.rs1
+            self.imm
         )
     }
 }
