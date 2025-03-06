@@ -51,11 +51,10 @@ impl<const START: u8, const END: u8> TryFrom<i32> for Immediate<START, END> {
     }
 }
 
-impl<const START: u8, const END: u8> RawBitsConverter for Immediate<START, END> {
-    type BitsData = u32;
+impl<const START: u8, const END: u8> RawBitsConverter<u32> for Immediate<START, END> {
     type Error = RISCVError;
 
-    fn try_from_raw_bits(bits: Self::BitsData) -> Result<Self, RISCVError> {
+    fn try_from_raw_bits(bits: u32) -> Result<Self, RISCVError> {
         debug_assert!(
             START <= END && END < 32,
             "Invalid immediate field bit positions"
@@ -71,7 +70,7 @@ impl<const START: u8, const END: u8> RawBitsConverter for Immediate<START, END> 
         )))
     }
 
-    fn into_raw_bits(&self) -> Self::BitsData {
+    fn into_raw_bits(&self) -> u32 {
         u32::from_le_bytes(self.0.to_le_bytes())
     }
 }
@@ -89,12 +88,6 @@ impl<const START: u8, const END: u8> From<Immediate<START, END>> for i32 {
 impl<const START: u8, const END: u8> From<&Immediate<START, END>> for i32 {
     fn from(imm: &Immediate<START, END>) -> Self {
         i32::from(*imm)
-    }
-}
-
-impl<const START: u8, const END: u8> From<Immediate<START, END>> for u32 {
-    fn from(imm: Immediate<START, END>) -> Self {
-        u32::from_le_bytes(imm.0.to_le_bytes())
     }
 }
 

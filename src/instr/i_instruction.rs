@@ -1,5 +1,5 @@
 use std::fmt;
-use crate::{config::UNKNOWN_MNEMONIC, data::get_mnemonic, error::RISCVError, model::{Funct3, Immediate, InstructionFormat, Opcode, Register}};
+use crate::{config::UNKNOWN_MNEMONIC, data::get_mnemonic, error::RISCVError, model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register}};
 
 use super::InstructionTrait;
 
@@ -36,8 +36,8 @@ impl TryFrom<u32> for IInstruction {
             return Err(RISCVError::UnexpectedFormat(format));
         }
 
-        let imm_val = i32::from_le_bytes((instr >> 20).to_le_bytes());
-        let imm = Immediate::<0, 11>::try_from(imm_val)?;
+        let imm_val = instr >> 20;
+        let imm = Immediate::<0, 11>::try_from_raw_bits(imm_val)?;
 
         Ok(Self {
             opcode,

@@ -4,7 +4,7 @@ use super::InstructionTrait;
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
-use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, Register};
+use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register};
 
 pub struct BInstruction {
     opcode: Opcode,
@@ -39,8 +39,8 @@ impl TryFrom<u32> for BInstruction {
             return Err(RISCVError::UnexpectedFormat(format));
         }
 
-        let imm_val = i32::from_le_bytes(((instr >> 7) & 0b11111 | ((instr >> 25) << 5)).to_le_bytes());
-        let imm = Immediate::<1, 12>::try_from(imm_val)?;
+        let imm_val = (instr >> 7) & 0b11111 | ((instr >> 25) << 5);
+        let imm = Immediate::<1, 12>::try_from_raw_bits(imm_val)?;
 
         Ok(Self {
             opcode,
@@ -64,4 +64,3 @@ impl fmt::Display for BInstruction {
         )
     }
 }
-

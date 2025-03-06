@@ -1,14 +1,11 @@
-use crate::error::RISCVError;
-
-pub trait RawBitsConverter {
-    type BitsData;
+pub trait RawBitsConverter<T> {
     type Error;
 
-    fn try_from_raw_bits(bits: Self::BitsData) -> Result<Self, Self::Error>
+    fn try_from_raw_bits(bits: T) -> Result<Self, Self::Error>
     where
         Self: Sized;
 
-    fn into_raw_bits(&self) -> Self::BitsData;
+    fn into_raw_bits(&self) -> T;
 }
 
 
