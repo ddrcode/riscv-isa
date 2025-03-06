@@ -11,7 +11,7 @@ pub struct SInstruction {
     rs1: Register,
     rs2: Register,
     funct3: Funct3,
-    imm: Immediate<12>,
+    imm: Immediate<0, 11>,
 }
 
 impl InstructionTrait for SInstruction {
@@ -40,7 +40,7 @@ impl TryFrom<u32> for SInstruction {
         }
 
         let imm_val = i32::from_le_bytes(((instr >> 7) & 0b11111 | ((instr >> 25) << 5)).to_le_bytes());
-        let imm = Immediate::<12>::try_from(imm_val)?;
+        let imm = Immediate::<0, 11>::try_from(imm_val)?;
 
         Ok(Self {
             opcode,

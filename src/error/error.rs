@@ -1,11 +1,12 @@
 use crate::model::InstructionFormat;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum RISCVError {
     InvalidOpcode,
     UnrecognizedInstructionFormat,
     UnexpectedFormat(InstructionFormat),
     InvalidFunct3Value,
     InvalidFunct7Value,
-    ImmediateTooBig(u8)
+    ImmediateOutOfRange(i32, i32),
+    ImmediateBitsBeforeStart(u8)
 }
