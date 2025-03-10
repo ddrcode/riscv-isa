@@ -24,4 +24,5 @@ fn main() {
     println!("{}", Instruction::try_from(0x80040293).unwrap());
     println!("{}", Instruction::try_from(0x00a5d463).unwrap()); // blt a1, a0, 0x101c4
     println!("{}", Instruction::try_from(0x000ff537).unwrap()); // lui a0, 0xff
+    println!("{}", Instruction::try_from(0x0ab0256f).unwrap()); // jal a0, 0x28aa
 }

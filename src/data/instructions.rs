@@ -62,7 +62,7 @@ lazy_static! {
             0b00101_000_0000000,
             ("AUIPC".to_string(), IF::U, EXT::I, 32)
         ),
-        (0b01011_000_0000000, ("JAL".to_string(), IF::J, EXT::I, 32)),
+        (0b11011_000_0000000, ("JAL".to_string(), IF::J, EXT::I, 32)),
         (0b01001_000_0000000, ("JALR".to_string(), IF::I, EXT::I, 32)),
         (0b01000_000_0000000, ("BEQ".to_string(), IF::B, EXT::I, 32)),
         (0b01000_001_0000000, ("BNE".to_string(), IF::B, EXT::I, 32)),
