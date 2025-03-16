@@ -72,4 +72,3 @@ delegate_instruction_methods!(Instruction, InstructionTrait,
     fn get_mnemonic(&self) -> Option<&str>,
     fn is_compressed(&self) -> bool
 );
-

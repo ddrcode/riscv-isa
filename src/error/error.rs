@@ -1,5 +1,5 @@
-use thiserror::Error;
 use crate::model::InstructionFormat;
+use thiserror::Error;
 
 #[derive(Debug, PartialEq, Error)]
 pub enum RISCVError {
@@ -22,5 +22,11 @@ pub enum RISCVError {
     ImmediateOutOfRange(i32, i32),
 
     #[error("Immediate cannot have any data before bit {0}")]
-    ImmediateBitsBeforeStart(u8)
+    ImmediateBitsBeforeStart(u8),
+
+    #[error("Unrecognized instruction size")]
+    UnrecognizedInstructionSize,
+
+    #[error("Unidentified extension")]
+    UnrecognizedExtension
 }

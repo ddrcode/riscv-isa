@@ -11,6 +11,7 @@ pub trait InstructionTrait {
     }
 
     fn is_compressed(&self) -> bool {
-        u8::from(*self.get_opcode()) & 0b11 == 0
+        u8::from(*self.get_opcode()) & 0b11 != 0b11
     }
+
 }
