@@ -28,5 +28,9 @@ pub enum RISCVError {
     UnrecognizedInstructionSize,
 
     #[error("Unidentified extension")]
-    UnrecognizedExtension
+    UnrecognizedExtension,
+
+    #[error("Disassembler error: {0}")]
+    DisasmError(String)
 }
+

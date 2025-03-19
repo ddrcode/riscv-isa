@@ -7,6 +7,7 @@ mod data;
 mod config;
 mod instr;
 mod utils;
+mod disasm;
 
 use instr::Instruction;
 use instr::InstructionTrait;
