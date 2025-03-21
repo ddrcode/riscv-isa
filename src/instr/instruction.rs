@@ -32,6 +32,20 @@ impl TryFrom<u32> for Instruction {
     }
 }
 
+impl From<Instruction> for u32 {
+    fn from(instr: Instruction) -> Self {
+        use Instruction::*;
+        match instr {
+            R(instr) => u32::from(instr),
+            I(instr) => u32::from(instr),
+            S(instr) => u32::from(instr),
+            B(instr) => u32::from(instr),
+            U(instr) => u32::from(instr),
+            J(instr) => u32::from(instr),
+        }
+    }
+}
+
 impl fmt::Display for Instruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use Instruction::*;

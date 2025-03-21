@@ -51,14 +51,14 @@ impl fmt::Display for Opcode {
 }
 
 impl Opcode {
-    pub fn get_format(&self) -> InstructionFormat {
+    pub fn format(&self) -> InstructionFormat {
         match InstructionFormat::try_from_opcode_binary(self.0) {
             Ok(format) => format,
             Err(_) => unreachable!(),
         }
     }
 
-    pub fn get_instruction_size(&self) -> InstructionSize {
+    pub fn instruction_size(&self) -> InstructionSize {
         match InstructionSize::try_from_opcode_binary(self.0) {
             Ok(size) => size,
             Err(_) => unreachable!(),

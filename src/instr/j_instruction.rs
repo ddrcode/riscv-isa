@@ -15,6 +15,17 @@ pub struct JInstruction {
     imm: Immediate<1, 20>,
 }
 
+impl JInstruction {
+    pub fn new(opcode: Opcode, rd: Register, imm: Immediate<1, 20>) -> Result<Self, RISCVError> {
+        let format = opcode.format();
+        if format != InstructionFormat::J {
+            return Err(RISCVError::UnexpectedFormat(format));
+        }
+
+        Ok(Self { opcode, rd, imm })
+    }
+}
+
 impl InstructionTrait for JInstruction {
     fn get_opcode(&self) -> &Opcode {
         &self.opcode
@@ -26,6 +37,10 @@ impl InstructionTrait for JInstruction {
 
     fn get_mnemonic(&self) -> Option<&str> {
         get_mnemonic(self.opcode, None, None)
+    }
+
+    fn immediate_bits(&self) -> u32 {
+        todo!()
     }
 }
 
@@ -45,7 +60,7 @@ impl TryFrom<u32> for JInstruction {
 
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = Opcode::try_from(instr)?;
-        let format = opcode.get_format();
+        let format = opcode.format();
 
         if format != InstructionFormat::J {
             return Err(RISCVError::UnexpectedFormat(format));
@@ -56,7 +71,7 @@ impl TryFrom<u32> for JInstruction {
 
         Ok(Self {
             opcode,
-            rd: Register::into_rd(instr),
+            rd: Register::from_rd_bits(instr),
             imm,
         })
     }

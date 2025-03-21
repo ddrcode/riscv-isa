@@ -6,6 +6,9 @@ pub enum RISCVError {
     #[error("Invalid opcode")]
     InvalidOpcode,
 
+    #[error("Register must be a number between 0 and 31")]
+    InvalidRegister,
+
     #[error("Unrecognized instruction format")]
     UnrecognizedInstructionFormat,
 

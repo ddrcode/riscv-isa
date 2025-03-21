@@ -14,4 +14,8 @@ pub trait InstructionTrait {
         u8::from(*self.get_opcode()) & 0b11 != 0b11
     }
 
+    fn immediate_bits(&self) -> u32;
+
 }
+
+

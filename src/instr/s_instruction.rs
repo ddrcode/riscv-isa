@@ -26,6 +26,11 @@ impl InstructionTrait for SInstruction {
     fn get_mnemonic(&self) -> Option<&str> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
     }
+
+    fn immediate_bits(&self) -> u32 {
+        let bits = self.imm.into_raw_bits();
+        ((bits & 0b11111) << 7) | ((bits >> 5) << 25)
+    }
 }
 
 impl TryFrom<u32> for SInstruction {
@@ -45,10 +50,20 @@ impl TryFrom<u32> for SInstruction {
         Ok(Self {
             opcode,
             funct3: Funct3::from(instr),
-            rs1: Register::into_rs1(instr),
-            rs2: Register::into_rs2(instr),
+            rs1: Register::from_rs1_bits(instr),
+            rs2: Register::from_rs2_bits(instr),
             imm,
         })
+    }
+}
+
+impl From<SInstruction> for u32 {
+    fn from(instr: SInstruction) -> u32 {
+        u32::from(instr.opcode)
+            | u32::from(instr.funct3)
+            | instr.rs1.into_rs1_bits()
+            | instr.rs2.into_rs2_bits()
+            | instr.immediate_bits()
     }
 }
 

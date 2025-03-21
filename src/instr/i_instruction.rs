@@ -1,5 +1,10 @@
+use crate::{
+    config::UNKNOWN_MNEMONIC,
+    data::get_mnemonic,
+    error::RISCVError,
+    model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register},
+};
 use std::fmt;
-use crate::{config::UNKNOWN_MNEMONIC, data::get_mnemonic, error::RISCVError, model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register}};
 
 use super::InstructionTrait;
 
@@ -23,6 +28,10 @@ impl InstructionTrait for IInstruction {
     fn get_mnemonic(&self) -> Option<&str> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
     }
+
+    fn immediate_bits(&self) -> u32 {
+        self.imm.into_raw_bits() << 20
+    }
 }
 
 impl TryFrom<u32> for IInstruction {
@@ -42,10 +51,20 @@ impl TryFrom<u32> for IInstruction {
         Ok(Self {
             opcode,
             funct3: Funct3::from(instr),
-            rs1: Register::into_rs1(instr),
-            rd: Register::into_rd(instr),
+            rs1: Register::from_rs1_bits(instr),
+            rd: Register::from_rd_bits(instr),
             imm,
         })
+    }
+}
+
+impl From<IInstruction> for u32 {
+    fn from(instr: IInstruction) -> u32 {
+        u32::from(instr.opcode)
+            | u32::from(instr.funct3)
+            | instr.rs1.into_rs1_bits()
+            | instr.rd.into_rd_bits()
+            | instr.immediate_bits()
     }
 }
 

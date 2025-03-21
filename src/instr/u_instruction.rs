@@ -27,6 +27,10 @@ impl InstructionTrait for UInstruction {
     fn get_mnemonic(&self) -> Option<&str> {
         get_mnemonic(self.opcode, None, None)
     }
+
+    fn immediate_bits(&self) -> u32 {
+        todo!()
+    }
 }
 
 impl TryFrom<u32> for UInstruction {
@@ -45,7 +49,7 @@ impl TryFrom<u32> for UInstruction {
 
         Ok(Self {
             opcode,
-            rd: Register::into_rd(instr),
+            rd: Register::from_rd_bits(instr),
             imm,
         })
     }

@@ -7,36 +7,72 @@ pub const REGISTER_MASK: u32 = 0b11111;
 pub struct Register(u8);
 
 impl Register {
-    pub fn into_rs1(instr: u32) -> Self {
-        Self::from(instr >> 15)
-    }
-
-    pub fn into_rs2(instr: u32) -> Self {
-        Self::from(instr >> 20)
-    }
-
-    pub fn into_rd(instr: u32) -> Self {
-        Self::from(instr >> 7)
-    }
-}
-
-impl From<u8> for Register {
-    fn from(reg: u8) -> Self {
-        Self(reg & (REGISTER_MASK as u8))
-    }
-}
-
-impl From<u32> for Register {
-    fn from(reg: u32) -> Self {
-        match u8::try_from(reg & REGISTER_MASK) {
-            Ok(val) => Register::from(val),
+    fn from_instr_bits(instr: u32, shift: u32) -> Self {
+        let bits = (instr >> shift) & REGISTER_MASK;
+        match Self::try_from(bits as u8) {
+            Ok(reg) => reg,
             Err(_) => unreachable!()
         }
+    }
+
+    pub fn from_rs1_bits(instr: u32) -> Self {
+        Self::from_instr_bits(instr, 15)
+    }
+
+    pub fn from_rs2_bits(instr: u32) -> Self {
+        Self::from_instr_bits(instr, 20)
+    }
+
+    pub fn from_rd_bits(instr: u32) -> Self {
+        Self::from_instr_bits(instr, 7)
+    }
+
+    pub fn into_rs1_bits(&self) -> u32 {
+        u32::from(self) << 15
+    }
+
+    pub fn into_rs2_bits(&self) -> u32 {
+        u32::from(self) << 20
+    }
+
+    pub fn into_rd_bits(&self) -> u32 {
+        u32::from(self) << 7
+    }
+}
+
+impl TryFrom<u8> for Register {
+    type Error = RISCVError;
+
+    fn try_from(reg: u8) -> Result<Self, Self::Error> {
+        if reg < 32 {
+            Ok(Self(reg))
+        } else {
+            Err(RISCVError::InvalidRegister)
+        }
+
+    }
+}
+
+impl From<Register> for u8 {
+    fn from(reg: Register) -> Self {
+        reg.0
+    }
+}
+
+impl From<&Register> for u8 {
+    fn from(reg: &Register) -> Self {
+        reg.0
     }
 }
 
 impl From<Register> for u32 {
     fn from(reg: Register) -> Self {
+        reg.0.into()
+    }
+}
+
+impl From<&Register> for u32 {
+    fn from(reg: &Register) -> Self {
         reg.0.into()
     }
 }
