@@ -15,11 +15,8 @@ pub enum RISCVError {
     #[error("Provided instruction format ({0}) is invalid for the instruction")]
     UnexpectedFormat(InstructionFormat),
 
-    #[error("Invalid Funct3 value")]
-    InvalidFunct3Value,
-
-    #[error("Invalid Funct7 value")]
-    InvalidFunct7Value,
+    #[error("Funct{0} value is too big")]
+    InvalidFunctValue(u8),
 
     #[error("Immediate value out of range. It must be between {0} and {1}")]
     ImmediateOutOfRange(i32, i32),
