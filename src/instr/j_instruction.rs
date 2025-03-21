@@ -40,7 +40,13 @@ impl InstructionTrait for JInstruction {
     }
 
     fn immediate_bits(&self) -> u32 {
-        todo!()
+        let imm = self.imm.into_raw_bits();
+        let mut res = 0u32;
+        copy_bits(&imm, 1, &mut res, 21, 10);
+        copy_bit(&imm, 11, &mut res, 20);
+        copy_bits(&imm, 12, &mut res, 12, 8);
+        copy_bit(&imm, 20, &mut res, 31);
+        res
     }
 }
 
@@ -74,6 +80,12 @@ impl TryFrom<u32> for JInstruction {
             rd: Register::from_rd_bits(instr),
             imm,
         })
+    }
+}
+
+impl From<JInstruction> for u32 {
+    fn from(instr: JInstruction) -> u32 {
+        u32::from(instr.opcode) | instr.rd.into_rd_bits() | instr.immediate_bits()
     }
 }
 

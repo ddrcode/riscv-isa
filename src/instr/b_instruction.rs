@@ -15,6 +15,29 @@ pub struct BInstruction {
     imm: Immediate<1, 12>,
 }
 
+impl BInstruction {
+    pub fn new(
+        opcode: Opcode,
+        rs1: Register,
+        rs2: Register,
+        funct3: Funct3,
+        imm: Immediate<1, 12>,
+    ) -> Result<Self, RISCVError> {
+        let format = opcode.format();
+        if format != InstructionFormat::B {
+            return Err(RISCVError::UnexpectedFormat(format));
+        }
+
+        Ok(Self {
+            opcode,
+            rs1,
+            rs2,
+            funct3,
+            imm,
+        })
+    }
+}
+
 fn get_raw_imm(instr: &u32) -> u32 {
     let mut res = 0u32;
 
@@ -51,7 +74,7 @@ impl TryFrom<u32> for BInstruction {
 
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = Opcode::try_from(instr)?;
-        let format = opcode.get_format();
+        let format = opcode.format();
 
         if format != InstructionFormat::B {
             return Err(RISCVError::UnexpectedFormat(format));
@@ -67,6 +90,16 @@ impl TryFrom<u32> for BInstruction {
             rs2: Register::from_rs2_bits(instr),
             imm,
         })
+    }
+}
+
+impl From<BInstruction> for u32 {
+    fn from(instr: BInstruction) -> u32 {
+        u32::from(instr.opcode)
+            | u32::from(instr.funct3)
+            | instr.rs1.into_rs1_bits()
+            | instr.rs2.into_rs2_bits()
+            | instr.immediate_bits()
     }
 }
 

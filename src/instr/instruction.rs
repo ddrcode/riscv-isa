@@ -83,5 +83,7 @@ delegate_instruction_methods!(Instruction, InstructionTrait,
     fn get_opcode(&self) -> &Opcode,
     fn get_format(&self) -> &InstructionFormat,
     fn get_mnemonic(&self) -> Option<&str>,
-    fn is_compressed(&self) -> bool
+    fn is_compressed(&self) -> bool,
+    fn immediate_bits(&self) -> u32
 );
+

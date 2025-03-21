@@ -15,6 +15,17 @@ pub struct UInstruction {
     imm: Immediate<12, 31>,
 }
 
+impl UInstruction {
+    pub fn new(opcode: Opcode, rd: Register, imm: Immediate<12, 31>) -> Result<Self, RISCVError> {
+        let format = opcode.format();
+        if format != InstructionFormat::U {
+            return Err(RISCVError::UnexpectedFormat(format));
+        }
+
+        Ok(Self { opcode, rd, imm })
+    }
+}
+
 impl InstructionTrait for UInstruction {
     fn get_opcode(&self) -> &Opcode {
         &self.opcode
@@ -29,7 +40,7 @@ impl InstructionTrait for UInstruction {
     }
 
     fn immediate_bits(&self) -> u32 {
-        todo!()
+        self.imm.into_raw_bits() << 12
     }
 }
 
@@ -38,7 +49,7 @@ impl TryFrom<u32> for UInstruction {
 
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = Opcode::try_from(instr)?;
-        let format = opcode.get_format();
+        let format = opcode.format();
 
         if format != InstructionFormat::U {
             return Err(RISCVError::UnexpectedFormat(format));
@@ -52,6 +63,12 @@ impl TryFrom<u32> for UInstruction {
             rd: Register::from_rd_bits(instr),
             imm,
         })
+    }
+}
+
+impl From<UInstruction> for u32 {
+    fn from(instr: UInstruction) -> u32 {
+        u32::from(instr.opcode) | instr.rd.into_rd_bits() | instr.immediate_bits()
     }
 }
 

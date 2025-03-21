@@ -1,12 +1,12 @@
 use std::fmt;
 
 use super::InstructionTrait;
+use crate::config::UNKNOWN_MNEMONIC;
+use crate::error::RISCVError;
 use crate::model::InstructionFormat;
 use crate::model::Opcode;
 use crate::model::Register;
 use crate::model::{Funct3, Funct7};
-use crate::config::UNKNOWN_MNEMONIC;
-use crate::error::RISCVError;
 
 use crate::data::get_mnemonic;
 
@@ -17,6 +17,31 @@ pub struct RInstruction {
     rd: Register,
     funct3: Funct3,
     funct7: Funct7,
+}
+
+impl RInstruction {
+    pub fn new(
+        opcode: Opcode,
+        rs1: Register,
+        rs2: Register,
+        rd: Register,
+        funct3: Funct3,
+        funct7: Funct7,
+    ) -> Result<Self, RISCVError> {
+        let format = opcode.format();
+        if format != InstructionFormat::R {
+            return Err(RISCVError::UnexpectedFormat(format));
+        }
+
+        Ok(Self {
+            opcode,
+            rs1,
+            rs2,
+            rd,
+            funct3,
+            funct7,
+        })
+    }
 }
 
 impl InstructionTrait for RInstruction {
@@ -42,7 +67,7 @@ impl TryFrom<u32> for RInstruction {
 
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = Opcode::try_from(instr)?;
-        let format = opcode.get_format();
+        let format = opcode.format();
 
         if format != InstructionFormat::R {
             return Err(RISCVError::UnexpectedFormat(format));

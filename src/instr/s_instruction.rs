@@ -14,6 +14,29 @@ pub struct SInstruction {
     imm: Immediate<0, 11>,
 }
 
+impl SInstruction {
+    pub fn new(
+        opcode: Opcode,
+        rs1: Register,
+        rs2: Register,
+        funct3: Funct3,
+        imm: Immediate<0, 11>,
+    ) -> Result<Self, RISCVError> {
+        let format = opcode.format();
+        if format != InstructionFormat::S {
+            return Err(RISCVError::UnexpectedFormat(format));
+        }
+
+        Ok(Self {
+            opcode,
+            rs1,
+            rs2,
+            funct3,
+            imm,
+        })
+    }
+}
+
 impl InstructionTrait for SInstruction {
     fn get_opcode(&self) -> &Opcode {
         &self.opcode
@@ -38,7 +61,7 @@ impl TryFrom<u32> for SInstruction {
 
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = Opcode::try_from(instr)?;
-        let format = opcode.get_format();
+        let format = opcode.format();
 
         if format != InstructionFormat::S {
             return Err(RISCVError::UnexpectedFormat(format));
