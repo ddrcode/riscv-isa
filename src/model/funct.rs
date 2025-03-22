@@ -5,7 +5,7 @@ use crate::error::RISCVError;
 
 /// A generic field type representing an instruction field with `BITS` bits.
 /// The constant `SHIFT` indicates the bit position in the instruction.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FunctField<const BITS: u8, const SHIFT: u8>(u8);
 
 impl<const BITS: u8, const SHIFT: u8> FunctField<BITS, SHIFT> {
@@ -18,7 +18,7 @@ impl<const BITS: u8, const SHIFT: u8> TryFrom<u8> for FunctField<BITS, SHIFT> {
 
     fn try_from(bits: u8) -> Result<Self, Self::Error> {
         if bits > Self::MAX_VALUE {
-            Err(RISCVError::InvalidFunctValue(BITS)) // You might want to differentiate errors based on BITS.
+            Err(RISCVError::InvalidFunctValue(BITS))
         } else {
             Ok(Self(bits))
         }
@@ -55,4 +55,3 @@ pub type Funct3 = FunctField<3, 12>;
 
 /// Type alias for Funct7
 pub type Funct7 = FunctField<7, 25>;
-

@@ -7,6 +7,7 @@ use crate::error::RISCVError;
 use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register};
 use crate::utils::bit::{copy_bit, copy_bits};
 
+#[derive(Debug, PartialEq)]
 pub struct BInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -35,6 +36,22 @@ impl BInstruction {
             funct3,
             imm,
         })
+    }
+
+    pub fn rs1(&self) -> Register {
+        self.rs1
+    }
+
+    pub fn rs2(&self) -> Register {
+        self.rs2
+    }
+
+    pub fn funct3(&self) -> Funct3 {
+        self.funct3
+    }
+
+    pub fn imm(&self) -> Immediate<1, 12> {
+        self.imm
     }
 }
 

@@ -6,6 +6,8 @@ use crate::{
     model::{InstructionSize, TryFromOpcodeBinary},
 };
 
+use super::DisasmConfig;
+
 
 #[derive(Debug)]
 pub enum DisasmError {
@@ -33,9 +35,22 @@ impl From<&str> for DisasmError {
 
 pub struct Disasm {
     reader: Box<dyn Read>,
+    config: DisasmConfig
 }
 
 impl Disasm {
+
+    pub fn new(reader: impl Read + 'static) -> Self {
+        Self::with_config(reader, DisasmConfig::default())
+    }
+
+    pub fn with_config(reader: impl Read + 'static, config: DisasmConfig) -> Self {
+        Self {
+            reader: Box::new(reader),
+            config
+        }
+    }
+
     /// Attempts to read the next instruction from the reader.
     fn next_instruction(&mut self) -> Result<Instruction, DisasmError> {
         // Read the first byte (which contains the opcode).
@@ -88,40 +103,29 @@ mod tests {
 
     #[test]
     fn test_disasm_next() {
-        // Prepare a valid 32-bit instruction:
-        // For our dummy InstructionSize::try_from_opcode_binary, opcode must be 0x33.
-        // We'll use the following 4 bytes: [0x33, 0x00, 0x00, 0x00].
-        let data = vec![0x33, 0x00, 0x00, 0x00];
+        let data = vec![0x33, 0x85, 0x62, 0x00]; // add a0, t0, t1
         let cursor = Cursor::new(data);
-        let mut disasm = Disasm {
-            reader: Box::new(cursor),
-        };
+        let mut disasm = Disasm::new(cursor);
 
-        // The first (and only) instruction should be read successfully.
         let instr = disasm.next();
         assert!(instr.is_some(), "Expected an instruction");
         let instr = instr.unwrap();
         match instr {
             Ok(instr) => {
-                assert_eq!(u32::from(instr), 0x33000000);
+                assert_eq!(u32::from(instr), 0x00628533);
             }
             Err(e) => panic!("Expected Ok(Instruction), got error: {:?}", e),
         }
 
-        // Next call should return None (no more instructions).
         assert!(disasm.next().is_none());
     }
 
     #[test]
     fn test_disasm_unexpected_eof() {
-        // Prepare data that doesn't have enough bytes for a complete instruction.
-        let data = vec![0x33, 0x00]; // Only 2 bytes
+        let data = vec![0x33, 0x00];
         let cursor = Cursor::new(data);
-        let mut disasm = Disasm {
-            reader: Box::new(cursor),
-        };
+        let mut disasm = Disasm::new(cursor);
 
-        // We expect an error wrapped in Some(...) rather than None.
         let result = disasm.next();
         assert!(result.is_some(), "Expected an error due to EOF");
         match result.unwrap() {

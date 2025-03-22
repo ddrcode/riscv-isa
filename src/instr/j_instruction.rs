@@ -9,6 +9,7 @@ use crate::{
     utils::bit::{copy_bit, copy_bits},
 };
 
+#[derive(Debug, PartialEq)]
 pub struct JInstruction {
     opcode: Opcode,
     rd: Register,
@@ -23,6 +24,14 @@ impl JInstruction {
         }
 
         Ok(Self { opcode, rd, imm })
+    }
+
+    pub fn rd(&self) -> Register {
+        self.rd
+    }
+
+    pub fn imm(&self) -> Immediate<1, 20> {
+        self.imm
     }
 }
 

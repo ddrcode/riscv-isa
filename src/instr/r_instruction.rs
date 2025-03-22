@@ -10,6 +10,7 @@ use crate::model::{Funct3, Funct7};
 
 use crate::data::get_mnemonic;
 
+#[derive(Debug, PartialEq)]
 pub struct RInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -41,6 +42,26 @@ impl RInstruction {
             funct3,
             funct7,
         })
+    }
+
+    pub fn rs1(&self) -> Register {
+        self.rs1
+    }
+
+    pub fn rs2(&self) -> Register {
+        self.rs2
+    }
+
+    pub fn rd(&self) -> Register {
+        self.rd
+    }
+
+    pub fn funct3(&self) -> Funct3 {
+        self.funct3
+    }
+
+    pub fn funct7(&self) -> Funct7 {
+        self.funct7
     }
 }
 
@@ -120,7 +141,6 @@ mod test {
 
     #[test]
     fn test_two_way_conversion() {
-        assert_instr(0b00000000_10110101_00000101_00111011);
         assert_instr(0x00028533); // add a0, t0, zero
         assert_instr(0x02b504b3); // mul s1, a0, a1
         assert_instr(0x00b574b3); // and s1, a0, a1

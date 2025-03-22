@@ -4,7 +4,7 @@ use std::fmt;
 
 pub const OPCODE_MASK: u32 = 0b1111111;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Opcode(u8);
 
 impl TryFrom<u8> for Opcode {

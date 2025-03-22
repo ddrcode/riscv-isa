@@ -3,7 +3,7 @@ use crate::error::RISCVError;
 
 pub const REGISTER_MASK: u32 = 0b11111;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Register(u8);
 
 impl Register {

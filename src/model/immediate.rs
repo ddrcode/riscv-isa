@@ -3,7 +3,7 @@ use std::fmt;
 use super::RawBitsConverter;
 use crate::error::RISCVError;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Immediate<const START: u8, const END: u8>(i32);
 
 impl<const START: u8, const END: u8> TryFrom<i32> for Immediate<START, END> {

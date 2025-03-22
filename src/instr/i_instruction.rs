@@ -8,6 +8,7 @@ use std::fmt;
 
 use super::InstructionTrait;
 
+#[derive(Debug, PartialEq)]
 pub struct IInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -36,6 +37,22 @@ impl IInstruction {
             funct3,
             imm,
         })
+    }
+
+    pub fn rs1(&self) -> Register {
+        self.rs1
+    }
+
+    pub fn rd(&self) -> Register {
+        self.rd
+    }
+
+    pub fn funct3(&self) -> Funct3 {
+        self.funct3
+    }
+
+    pub fn imm(&self) -> Immediate<0, 11> {
+        self.imm
     }
 }
 

@@ -9,6 +9,7 @@ use crate::{
 
 use super::InstructionTrait;
 
+#[derive(Debug, PartialEq)]
 pub struct UInstruction {
     opcode: Opcode,
     rd: Register,
@@ -23,6 +24,14 @@ impl UInstruction {
         }
 
         Ok(Self { opcode, rd, imm })
+    }
+
+    pub fn rd(&self) -> Register {
+        self.rd
+    }
+
+    pub fn imm(&self) -> Immediate<12, 31> {
+        self.imm
     }
 }
 

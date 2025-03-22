@@ -6,6 +6,7 @@ use crate::data::get_mnemonic;
 use crate::error::RISCVError;
 use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register};
 
+#[derive(Debug, PartialEq)]
 pub struct SInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -34,6 +35,22 @@ impl SInstruction {
             funct3,
             imm,
         })
+    }
+
+    pub fn rs1(&self) -> Register {
+        self.rs1
+    }
+
+    pub fn rs2(&self) -> Register {
+        self.rs2
+    }
+
+    pub fn funct3(&self) -> Funct3 {
+        self.funct3
+    }
+
+    pub fn imm(&self) -> Immediate<0, 11> {
+        self.imm
     }
 }
 

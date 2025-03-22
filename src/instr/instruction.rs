@@ -2,8 +2,9 @@ use std::fmt;
 
 use super::*;
 use crate::error::RISCVError;
-use crate::model::{InstructionFormat, Opcode};
+use crate::model::{Funct3, Funct7, Immediate, InstructionFormat, Opcode, Register};
 
+#[derive(Debug, PartialEq)]
 pub enum Instruction {
     R(RInstruction),
     I(IInstruction),
@@ -11,6 +12,70 @@ pub enum Instruction {
     B(BInstruction),
     U(UInstruction),
     J(JInstruction),
+}
+
+impl Instruction {
+    pub fn funct3(&self) -> Option<Funct3> {
+        use Instruction::*;
+        match self {
+            R(instr) => Some(instr.funct3()),
+            I(instr) => Some(instr.funct3()),
+            S(instr) => Some(instr.funct3()),
+            B(instr) => Some(instr.funct3()),
+            _ => None,
+        }
+    }
+
+    pub fn funct7(&self) -> Option<Funct7> {
+        use Instruction::*;
+        match self {
+            R(instr) => Some(instr.funct7()),
+            _ => None,
+        }
+    }
+
+    pub fn rs1(&self) -> Option<Register> {
+        use Instruction::*;
+        match self {
+            R(instr) => Some(instr.rs1()),
+            I(instr) => Some(instr.rs1()),
+            S(instr) => Some(instr.rs1()),
+            B(instr) => Some(instr.rs1()),
+            _ => None,
+        }
+    }
+
+    pub fn rs2(&self) -> Option<Register> {
+        use Instruction::*;
+        match self {
+            R(instr) => Some(instr.rs2()),
+            S(instr) => Some(instr.rs2()),
+            B(instr) => Some(instr.rs2()),
+            _ => None,
+        }
+    }
+
+    pub fn rd(&self) -> Option<Register> {
+        use Instruction::*;
+        match self {
+            R(instr) => Some(instr.rd()),
+            I(instr) => Some(instr.rd()),
+            U(instr) => Some(instr.rd()),
+            J(instr) => Some(instr.rd()),
+            _ => None,
+        }
+    }
+
+    // pub fn imm<const START: u8, const END: u8>(&self) -> Option<Immediate<START, END>> {
+    //     use Instruction::*;
+    //     match self {
+    //         S(instr) if START==0 && END==11 => Some(instr.imm()),
+    //         // I(instr) => Some(instr.imm()),
+    //         // U(instr) => Some(instr.imm()),
+    //         // J(instr) => Some(instr.imm()),
+    //         _ => None,
+    //     }
+    // }
 }
 
 impl TryFrom<u32> for Instruction {
