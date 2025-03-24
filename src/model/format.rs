@@ -1,6 +1,6 @@
-use std::fmt;
+use super::{TryFromOpcodeBinary, OPCODE_MASK};
 use crate::error::*;
-use crate::opcode::OPCODE_MASK;
+use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub enum InstructionFormat {
@@ -12,18 +12,25 @@ pub enum InstructionFormat {
     U,
 }
 
-
 impl fmt::Display for InstructionFormat {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}-Type", self)
     }
 }
 
-
-impl TryFrom<u8> for InstructionFormat {
+impl TryFrom<u32> for InstructionFormat {
     type Error = RISCVError;
 
-    fn try_from(opcode: u8) -> Result<Self, Self::Error> {
+    fn try_from(bits: u32) -> Result<Self, Self::Error> {
+        match u8::try_from(bits & OPCODE_MASK) {
+            Ok(opcode) => InstructionFormat::try_from_opcode_binary(opcode),
+            Err(_) => unreachable!(),
+        }
+    }
+}
+
+impl TryFromOpcodeBinary for InstructionFormat {
+    fn try_from_opcode_binary(opcode: u8) -> Result<Self, RISCVError> {
         use InstructionFormat::*;
         match opcode >> 2 {
             0b11000 => Ok(B),
@@ -31,20 +38,8 @@ impl TryFrom<u8> for InstructionFormat {
             0b11011 => Ok(J),
             0b01100 | 0b01011 | 0b01110 => Ok(R),
             0b01000 => Ok(S),
-            _ => Err(RISCVError::UnrecognizedInstructionFormat)
+            0b01101 => Ok(U),
+            _ => Err(RISCVError::UnrecognizedInstructionFormat),
         }
     }
-}
-
-
-impl TryFrom<u32> for InstructionFormat {
-    type Error = RISCVError;
-
-    fn try_from(bits: u32) -> Result<Self, Self::Error> {
-        match u8::try_from(bits & OPCODE_MASK) {
-            Ok(opcode) => InstructionFormat::try_from(opcode),
-            Err(_) => unreachable!()
-        }
-    }
-
 }

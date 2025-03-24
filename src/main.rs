@@ -1,29 +1,37 @@
+mod config;
+mod data;
+mod disasm;
 mod error;
-mod format;
-mod opcode;
-mod instrtrait;
-mod instruction;
-mod rtype;
-mod stype;
-mod register;
-mod immediate;
-mod funct;
-mod extension;
+mod instr;
+mod model;
+mod utils;
 
+use std::env;
+use std::fs::File;
+use std::io::{BufReader, Result};
 
-use format::InstructionFormat;
-use instruction::{ Instruction };
-use instrtrait::InstructionTrait;
-use rtype::RInstruction;
+use disasm::{Disasm, DisasmConfig};
 
-fn main() {
-    let bits: u32 = 0x00b574b3;
-    let instr = Instruction::try_from(bits).unwrap();
-    println!("Format {}", instr.get_format());
-    println!("Opcode {}", instr.get_opcode());
-    println!("Compressed {}", instr.is_compressed());
+fn main() -> Result<()> {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        eprintln!("Usage: {} <filename>", args[0]);
+        std::process::exit(1);
+    }
+    let filename = &args[1];
 
+    let file = File::open(filename)?;
+    let reader = BufReader::new(file);
 
-    let instr = RInstruction::try_from(bits).unwrap();
-    println!("R: {}", instr);
+    let mut config = DisasmConfig::default();
+    config.mnemonic_uppercase = false;
+    config.register_separator = "\t".to_string();
+    config.immediate_format = |imm: i32| format!("{:08x}", imm);
+
+    let mut disasm = Disasm::with_config(reader, config);
+    if let Err(e) = disasm.print_all() {
+        println!("Error disassembling instruction: {:?}", e);
+    }
+
+    Ok(())
 }
