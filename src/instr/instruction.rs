@@ -144,3 +144,20 @@ delegate_instruction_methods!(Instruction, InstructionTrait,
     fn is_compressed(&self) -> bool,
     fn immediate_bits(&self) -> u32
 );
+
+macro_rules! create_from_instruction {
+    ($enum_name:ident, $inst_type:ident) => {
+        impl From<$inst_type> for Instruction {
+            fn from(instr: $inst_type) -> Self {
+                Instruction::$enum_name(instr)
+            }
+        }
+    };
+}
+
+create_from_instruction!(R, RInstruction);
+create_from_instruction!(I, IInstruction);
+create_from_instruction!(S, SInstruction);
+create_from_instruction!(B, BInstruction);
+create_from_instruction!(U, UInstruction);
+create_from_instruction!(J, JInstruction);
