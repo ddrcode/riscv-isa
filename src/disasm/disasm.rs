@@ -1,6 +1,6 @@
 use std::io::{self, Read};
 
-use super::{DisasmConfig, DisasmError, InstructionFormatter, InstructionRecord};
+use super::{Address, DisasmConfig, DisasmError, InstructionFormatter, InstructionRecord};
 use crate::{
     instr::Instruction,
     model::{InstructionSize, TryFromOpcodeBinary},
@@ -8,7 +8,8 @@ use crate::{
 
 pub struct Disasm {
     reader: Box<dyn Read>,
-    formatter: InstructionFormatter
+    formatter: InstructionFormatter,
+    addr: Address
 }
 
 impl Disasm {
@@ -17,9 +18,11 @@ impl Disasm {
     }
 
     pub fn with_config(reader: impl Read + 'static, config: DisasmConfig) -> Self {
+        let addr = config.start_addr;
         Self {
             reader: Box::new(reader),
-            formatter: InstructionFormatter::new(config)
+            formatter: InstructionFormatter::new(config),
+            addr
         }
     }
 
@@ -29,8 +32,8 @@ impl Disasm {
         self.reader.read_exact(&mut opcode_buf)?;
         let opcode = opcode_buf[0] & 0x7f;
 
-        match InstructionSize::try_from_opcode_binary(opcode) {
-            Ok(InstructionSize::Size32) => { /* ok */ }
+        let instr_size = match InstructionSize::try_from_opcode_binary(opcode) {
+            Ok(InstructionSize::Size32) => 32,
             Ok(_) => {
                 return Err(DisasmError::from(
                     "The disassembler doesn't currently support instructions of a size other than 32 bits"
@@ -46,7 +49,10 @@ impl Disasm {
 
         let bytes = [opcode_buf[0], rest[0], rest[1], rest[2]];
         let instruction = Instruction::try_from_le_bytes(bytes).map_err(DisasmError::from)?;
-        Ok(InstructionRecord::new(instruction, 0))
+        let record = InstructionRecord::new(instruction, self.addr);
+        self.addr += instr_size;
+
+        Ok(record)
     }
 
     pub fn print_next(&mut self) -> Result<(), DisasmError> {

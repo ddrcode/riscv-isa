@@ -15,6 +15,7 @@ pub struct DisasmConfig {
     pub show_addr: bool,
     pub start_addr: Address,
     pub addr_format: String,
+    pub addr_separator: String,
 
     pub unknown_mnemonic: String,
     pub hex_uppercase: bool,
@@ -43,6 +44,7 @@ impl Default for DisasmConfig {
             show_addr: true,
             start_addr: 0,
             addr_format: String::from("{:x}"),
+            addr_separator: String::from(":   "),
 
             unknown_mnemonic: UNKNOWN_MNEMONIC.to_string(),
             hex_uppercase: false,
