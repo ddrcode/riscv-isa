@@ -1,10 +1,10 @@
-mod config;
-mod data;
-mod disasm;
-mod error;
-mod instr;
-mod model;
-mod utils;
+pub mod config;
+pub mod data;
+pub mod disasm;
+pub mod error;
+pub mod instr;
+pub mod model;
+pub mod utils;
 
 use std::env;
 use std::fs::File;
