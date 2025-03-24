@@ -5,11 +5,11 @@ use crate::{
     config::UNKNOWN_MNEMONIC,
     data::get_mnemonic,
     error::RISCVError,
-    model::{Immediate, InstructionFormat, Opcode, RawBitsConverter, Register},
+    model::{Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
     utils::bit::{copy_bit, copy_bits},
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct JInstruction {
     opcode: Opcode,
     rd: Register,
@@ -44,7 +44,7 @@ impl InstructionTrait for JInstruction {
         &InstructionFormat::J
     }
 
-    fn get_mnemonic(&self) -> Option<&str> {
+    fn get_mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, None, None)
     }
 
@@ -103,7 +103,7 @@ impl fmt::Display for JInstruction {
         write!(
             f,
             "{} {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
+            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.imm
         )

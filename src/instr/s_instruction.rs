@@ -4,9 +4,9 @@ use super::InstructionTrait;
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
-use crate::model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register};
+use crate::model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct SInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -63,7 +63,7 @@ impl InstructionTrait for SInstruction {
         &InstructionFormat::S
     }
 
-    fn get_mnemonic(&self) -> Option<&str> {
+    fn get_mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
     }
 
@@ -112,7 +112,7 @@ impl fmt::Display for SInstruction {
         write!(
             f,
             "{} {}, {}({})",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
+            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rs2,
             self.imm,
             self.rs1

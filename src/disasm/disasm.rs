@@ -1,45 +1,17 @@
 use std::io::{self, Read};
 
+use super::{DisasmConfig, DisasmError, InstructionFormatter, InstructionRecord};
 use crate::{
-    error::RISCVError,
     instr::Instruction,
     model::{InstructionSize, TryFromOpcodeBinary},
 };
 
-use super::DisasmConfig;
-
-
-#[derive(Debug)]
-pub enum DisasmError {
-    IOError(io::Error),
-    RISCVError(RISCVError),
-}
-
-impl From<io::Error> for DisasmError {
-    fn from(err: io::Error) -> Self {
-        Self::IOError(err)
-    }
-}
-
-impl From<RISCVError> for DisasmError {
-    fn from(err: RISCVError) -> Self {
-        Self::RISCVError(err)
-    }
-}
-
-impl From<&str> for DisasmError {
-    fn from(msg: &str) -> Self {
-        Self::RISCVError(RISCVError::DisasmError(msg.to_string()))
-    }
-}
-
 pub struct Disasm {
     reader: Box<dyn Read>,
-    config: DisasmConfig
+    formatter: InstructionFormatter
 }
 
 impl Disasm {
-
     pub fn new(reader: impl Read + 'static) -> Self {
         Self::with_config(reader, DisasmConfig::default())
     }
@@ -47,19 +19,16 @@ impl Disasm {
     pub fn with_config(reader: impl Read + 'static, config: DisasmConfig) -> Self {
         Self {
             reader: Box::new(reader),
-            config
+            formatter: InstructionFormatter::new(config)
         }
     }
 
     /// Attempts to read the next instruction from the reader.
-    fn next_instruction(&mut self) -> Result<Instruction, DisasmError> {
-        // Read the first byte (which contains the opcode).
+    fn next_instruction(&mut self) -> Result<InstructionRecord, DisasmError> {
         let mut opcode_buf = [0u8];
-        // Using read_exact so that we get an error if no byte is available.
         self.reader.read_exact(&mut opcode_buf)?;
         let opcode = opcode_buf[0] & 0x7f;
 
-        // Determine instruction size.
         match InstructionSize::try_from_opcode_binary(opcode) {
             Ok(InstructionSize::Size32) => { /* ok */ }
             Ok(_) => {
@@ -70,26 +39,38 @@ impl Disasm {
             Err(e) => return Err(DisasmError::from(e)),
         };
 
-        // Read the remaining 3 bytes.
         let mut rest = [0u8; 3];
-        self.reader.read_exact(&mut rest)
+        self.reader
+            .read_exact(&mut rest)
             .map_err(|_| DisasmError::from("Unexpected end of file"))?;
 
-        // Combine into a 4-byte little-endian value.
-        let full_bytes = [opcode_buf[0], rest[0], rest[1], rest[2]];
-        Instruction::try_from(u32::from_le_bytes(full_bytes))
-            .map_err(DisasmError::from)
+        let bytes = [opcode_buf[0], rest[0], rest[1], rest[2]];
+        let instruction = Instruction::try_from_le_bytes(bytes).map_err(DisasmError::from)?;
+        Ok(InstructionRecord::new(instruction, 0))
+    }
+
+    pub fn print_next(&mut self) -> Result<(), DisasmError> {
+        let record = self.next_instruction()?;
+        println!("{}", self.formatter.record(&record));
+        Ok(())
+    }
+
+    pub fn print_all(&mut self) -> Result<(), DisasmError> {
+        let formatter = self.formatter.clone();
+        self.try_for_each(|result| {
+            let record = result?;
+            println!("{}", formatter.record(&record));
+            Ok(())
+        })
     }
 }
 
 impl Iterator for Disasm {
-    type Item = Result<Instruction, DisasmError>;
+    type Item = Result<InstructionRecord, DisasmError>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // Try reading the next instruction.
-        // Here, if we hit an EOF, we convert that to None, ending iteration.
         match self.next_instruction() {
-            Ok(instr) => Some(Ok(instr)),
+            Ok(record) => Some(Ok(record)),
             Err(DisasmError::IOError(ref e)) if e.kind() == io::ErrorKind::UnexpectedEof => None,
             Err(e) => Some(Err(e)),
         }
@@ -99,6 +80,7 @@ impl Iterator for Disasm {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::error::RISCVError;
     use std::io::Cursor;
 
     #[test]
@@ -107,12 +89,12 @@ mod tests {
         let cursor = Cursor::new(data);
         let mut disasm = Disasm::new(cursor);
 
-        let instr = disasm.next();
-        assert!(instr.is_some(), "Expected an instruction");
-        let instr = instr.unwrap();
-        match instr {
-            Ok(instr) => {
-                assert_eq!(u32::from(instr), 0x00628533);
+        let record = disasm.next();
+        assert!(record.is_some(), "Expected an instruction");
+        let record = record.unwrap();
+        match record {
+            Ok(record) => {
+                assert_eq!(u32::from(record.instruction()), 0x00628533);
             }
             Err(e) => panic!("Expected Ok(Instruction), got error: {:?}", e),
         }

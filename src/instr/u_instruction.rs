@@ -4,12 +4,12 @@ use crate::{
     config::UNKNOWN_MNEMONIC,
     data::get_mnemonic,
     error::RISCVError,
-    model::{Immediate, InstructionFormat, Opcode, RawBitsConverter, Register},
+    model::{Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
 };
 
 use super::InstructionTrait;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct UInstruction {
     opcode: Opcode,
     rd: Register,
@@ -44,7 +44,7 @@ impl InstructionTrait for UInstruction {
         &InstructionFormat::U
     }
 
-    fn get_mnemonic(&self) -> Option<&str> {
+    fn get_mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, None, None)
     }
 
@@ -86,7 +86,7 @@ impl fmt::Display for UInstruction {
         write!(
             f,
             "{} {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
+            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.imm
         )

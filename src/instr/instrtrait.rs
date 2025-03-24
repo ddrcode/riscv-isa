@@ -1,13 +1,13 @@
 use crate::config::UNKNOWN_MNEMONIC;
-use crate::model::{InstructionFormat, Opcode};
+use crate::model::{InstructionFormat, Mnemonic, Opcode};
 
 pub trait InstructionTrait {
     fn get_opcode(&self) -> &Opcode;
 
     fn get_format(&self) -> &InstructionFormat;
 
-    fn get_mnemonic(&self) -> Option<&str> {
-        Some(UNKNOWN_MNEMONIC)
+    fn get_mnemonic(&self) -> Option<Mnemonic> {
+        Some(UNKNOWN_MNEMONIC.into())
     }
 
     fn is_compressed(&self) -> bool {

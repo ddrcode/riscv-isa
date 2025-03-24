@@ -1,10 +1,9 @@
-use std::fmt;
+use std::fmt::{self};
 
-use crate::instr::Instruction;
-use super::{Address, DisasmConfig};
+use super::Address;
+use crate::instr::{Instruction, InstructionTrait};
 
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct InstructionRecord {
     instruction: Instruction,
     address: Address,
@@ -18,21 +17,17 @@ impl InstructionRecord {
         }
     }
 
-    pub fn instruction(&self) -> &Instruction {
-        &self.instruction
+    pub fn instruction(&self) -> Instruction {
+        self.instruction
     }
 
     pub fn address(&self) -> Address {
         self.address
     }
-
-    pub fn to_string_with_config(&self, config: &DisasmConfig) -> String {
-        todo!()
-    }
 }
 
 impl fmt::Display for InstructionRecord {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_string_with_config(&DisasmConfig::default()))
+        write!(f, "{:x}: {}", self.address, self.instruction)
     }
 }

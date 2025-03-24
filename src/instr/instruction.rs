@@ -2,9 +2,9 @@ use std::fmt;
 
 use super::*;
 use crate::error::RISCVError;
-use crate::model::{Funct3, Funct7, Immediate, InstructionFormat, Opcode, Register};
+use crate::model::{Funct3, Funct7, InstructionFormat, Mnemonic, Opcode, Register};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Instruction {
     R(RInstruction),
     I(IInstruction),
@@ -15,6 +15,10 @@ pub enum Instruction {
 }
 
 impl Instruction {
+    pub fn try_from_le_bytes(bytes: [u8; 4]) -> Result<Self, RISCVError> {
+        Instruction::try_from(u32::from_le_bytes(bytes))
+    }
+
     pub fn funct3(&self) -> Option<Funct3> {
         use Instruction::*;
         match self {
@@ -65,17 +69,6 @@ impl Instruction {
             _ => None,
         }
     }
-
-    // pub fn imm<const START: u8, const END: u8>(&self) -> Option<Immediate<START, END>> {
-    //     use Instruction::*;
-    //     match self {
-    //         S(instr) if START==0 && END==11 => Some(instr.imm()),
-    //         // I(instr) => Some(instr.imm()),
-    //         // U(instr) => Some(instr.imm()),
-    //         // J(instr) => Some(instr.imm()),
-    //         _ => None,
-    //     }
-    // }
 }
 
 impl TryFrom<u32> for Instruction {
@@ -147,8 +140,7 @@ macro_rules! delegate_instruction_methods {
 delegate_instruction_methods!(Instruction, InstructionTrait,
     fn get_opcode(&self) -> &Opcode,
     fn get_format(&self) -> &InstructionFormat,
-    fn get_mnemonic(&self) -> Option<&str>,
+    fn get_mnemonic(&self) -> Option<Mnemonic>,
     fn is_compressed(&self) -> bool,
     fn immediate_bits(&self) -> u32
 );
-

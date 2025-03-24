@@ -4,13 +4,14 @@ use super::InstructionTrait;
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::error::RISCVError;
 use crate::model::InstructionFormat;
+use crate::model::Mnemonic;
 use crate::model::Opcode;
 use crate::model::Register;
 use crate::model::{Funct3, Funct7};
 
 use crate::data::get_mnemonic;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct RInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -74,7 +75,7 @@ impl InstructionTrait for RInstruction {
         &InstructionFormat::R
     }
 
-    fn get_mnemonic(&self) -> Option<&str> {
+    fn get_mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), Some(self.funct7))
     }
 
@@ -122,7 +123,7 @@ impl fmt::Display for RInstruction {
         write!(
             f,
             "{} {}, {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
+            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.rs1,
             self.rs2

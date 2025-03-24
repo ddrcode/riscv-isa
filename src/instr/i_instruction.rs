@@ -2,13 +2,13 @@ use crate::{
     config::UNKNOWN_MNEMONIC,
     data::get_mnemonic,
     error::RISCVError,
-    model::{Funct3, Immediate, InstructionFormat, Opcode, RawBitsConverter, Register},
+    model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
 };
 use std::fmt;
 
 use super::InstructionTrait;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct IInstruction {
     opcode: Opcode,
     rs1: Register,
@@ -65,7 +65,7 @@ impl InstructionTrait for IInstruction {
         &InstructionFormat::I
     }
 
-    fn get_mnemonic(&self) -> Option<&str> {
+    fn get_mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
     }
 
@@ -113,7 +113,7 @@ impl fmt::Display for IInstruction {
         write!(
             f,
             "{} {}, {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC),
+            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.rs1,
             self.imm
