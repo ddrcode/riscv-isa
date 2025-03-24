@@ -106,3 +106,7 @@ without calling disassembler:
     println!("{}, {}", instr.format(), instr.extension()); // "B, I"
     println!("{}", instr); // "BLT a1, a0, 0x101c4"
 ```
+
+## License
+
+MIT License. See [LICENCE file](LICENSE) for details.
