@@ -2,6 +2,8 @@
 
 A Rust library for representing the RISC-V Instruction Set Architecture (ISA) and for disassembling RISC-V binary code. This project aims to provide a rock‑solid, type‑safe model for RISC-V instructions, along with a disassembler that leverages this model to produce human‑readable assembly.
 
+**Note** - the library is still under heavy development, and the API can change from version to version, providing breaking changes. 
+
 ## Features
 
 - **RISC-V ISA Representation**
