@@ -1,5 +1,5 @@
 [package]
-name = "riscv-rust"
+name = "riscv-isa"
 version = "0.1.0"
 edition = "2021"
 

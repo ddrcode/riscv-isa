@@ -1,3 +1,5 @@
+# RISC-V ISA (Rust library)
+
 A Rust library for representing the RISC-V Instruction Set Architecture (ISA) and for disassembling RISC-V binary code. This project aims to provide a rock‑solid, type‑safe model for RISC-V instructions, along with a disassembler that leverages this model to produce human‑readable assembly.
 
 ## Features
@@ -84,7 +86,7 @@ The code below creates an I-type instruction (`LBU s1, 0xff(a0)`):
 ```Rust
     let opcode = Opcode::try_from(0b0000011)?;
     let rs1 = Register::try_from("a0")?;
-    let rd = Register::try_from(12)?; // s1
+    let rd = Register::try_from(9)?; // s1
     let funct3 = Funct3::try_from(0b100)?;
     let imm = Immediate::<0:11>::try_from(0xff)?;
     let instr = IInstruction::new(opcode, rs1, rd, funct3, imm)?;
