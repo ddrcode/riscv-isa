@@ -6,10 +6,10 @@ pub fn get_mnemonic(
     funct3: Option<Funct3>,
     funct7: Option<Funct7>,
 ) -> Option<Mnemonic> {
-    let op: u16 = (u8::from(opcode) & 0b1111100).into();
+    let op: u16 = (u8::from(opcode) >> 2).into();
     let f3: u16 = funct3.map_or(0, |val| u16::from(u8::from(val)));
     let f7: u16 = funct7.map_or(0, |val| u16::from(u8::from(val)));
-    let code: u16 = (op << 8) | (f3 << 7) | f7;
+    let code: u16 =  op | (f3 << 5) | (f7 << 8);
 
     INSTRUCTIONS.get(&code).map(|res| res.0.into())
 }

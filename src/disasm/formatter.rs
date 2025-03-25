@@ -162,7 +162,7 @@ impl InstructionFormatter {
     ///
     /// A formatted number string.
     pub fn number(&self, n: i32) -> String {
-        format!("{:x}", n)
+        (self.config.immediate_format)(n)
     }
 
     /// Formats an address.

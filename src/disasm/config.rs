@@ -39,7 +39,7 @@ impl Default for DisasmConfig {
             register_uppercase: false,
             register_separator: String::from(" "),
 
-            immediate_format: |_| String::from("{:x}"),
+            immediate_format: |num| format!("0x{:x}", num),
 
             show_addr: true,
             start_addr: 0,
