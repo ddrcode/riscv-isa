@@ -7,7 +7,8 @@ use crate::{
 
 use super::{Address, DisasmConfig, InstructionRecord};
 
-/// A formatter for instructions, providing various formatting options based on the configuration.
+/// A formatter for instructions, providing various formatting options based on
+/// provided configuration.
 #[derive(Debug, Clone)]
 pub struct InstructionFormatter {
     config: DisasmConfig,

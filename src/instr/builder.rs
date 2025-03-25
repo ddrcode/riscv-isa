@@ -17,9 +17,8 @@ use super::{Instruction, InstructionTrait};
 /// # Example
 ///
 /// ```rust
-/// use riscv_isa::instr::{InstructionBuilder, Instruction};
-/// use riscv_isa::model::{Opcode, Register};
-/// # use riscv_isa::error::RISCVError;
+/// use riscv_isa::{InstructionBuilder, Opcode, Register};
+/// # use riscv_isa::{RISCVError, Instruction};
 ///
 /// # fn create_add() -> Result<Instruction, RISCVError> {
 /// let instruction = InstructionBuilder::new()
