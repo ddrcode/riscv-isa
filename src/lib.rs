@@ -71,7 +71,7 @@
 //! # let reader = File::open("file.bin").unwrap();
 //! let mut disasm = Disasm::new(reader);
 //! if let Err(e) = disasm.print_all() {
-//!     println!("Error disassembling instruction: {:?}", e);
+//!     eprintln!("Error disassembling instruction: {:?}", e);
 //! }
 //! ```
 //!

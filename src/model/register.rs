@@ -45,7 +45,7 @@ impl Register {
         let bits = (instr >> shift) & REGISTER_MASK;
         match Self::try_from(bits as u8) {
             Ok(reg) => reg,
-            Err(_) => unreachable!()
+            Err(_) => unreachable!("As the value is masked, it's always 5-bits, as expected")
         }
     }
 
