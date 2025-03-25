@@ -1,4 +1,5 @@
 mod b_instruction;
+mod builder;
 mod i_instruction;
 mod instrtrait;
 mod instruction;
@@ -8,6 +9,7 @@ mod s_instruction;
 mod u_instruction;
 
 pub use b_instruction::BInstruction;
+pub use builder::*;
 pub use i_instruction::IInstruction;
 pub use instrtrait::*;
 pub use instruction::*;

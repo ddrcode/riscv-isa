@@ -1,16 +1,17 @@
-mod config;
-mod data;
+pub mod config;
+pub mod data;
 mod disasm;
 mod error;
-mod instr;
-mod model;
-mod utils;
+pub mod instr;
+pub mod model;
+pub mod utils;
+
+pub use error::RISCVError;
+pub use disasm::*;
 
 use std::env;
 use std::fs::File;
 use std::io::{BufReader, Result};
-
-use disasm::{Disasm, DisasmConfig};
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();

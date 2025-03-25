@@ -69,21 +69,21 @@ fn get_raw_imm(instr: &u32) -> u32 {
 }
 
 impl InstructionTrait for BInstruction {
-    fn get_opcode(&self) -> &Opcode {
+    fn opcode(&self) -> &Opcode {
         &self.opcode
     }
 
-    fn get_format(&self) -> &InstructionFormat {
+    fn format(&self) -> &InstructionFormat {
         &InstructionFormat::B
     }
 
-    fn get_mnemonic(&self) -> Option<Mnemonic> {
+    fn mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
     }
 
     fn immediate_bits(&self) -> u32 {
-        let imm = self.imm.into_raw_bits();
-        let res = 0u32;
+        let _imm = self.imm.into_raw_bits();
+        let _res = 0u32;
         todo!();
     }
 }
@@ -127,7 +127,7 @@ impl fmt::Display for BInstruction {
         write!(
             f,
             "{} {}, {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
+            self.mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rs1,
             self.rs2,
             self.imm

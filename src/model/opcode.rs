@@ -38,7 +38,7 @@ impl TryFrom<u32> for Opcode {
     fn try_from(instr: u32) -> Result<Self, Self::Error> {
         let opcode = match u8::try_from(instr & OPCODE_MASK) {
             Ok(val) => val,
-            Err(_) => unreachable!(),
+            Err(_) => unreachable!("As the value is masked, it must always be a 7-bit number"),
         };
         Opcode::try_from(opcode)
     }
@@ -54,14 +54,14 @@ impl Opcode {
     pub fn format(&self) -> InstructionFormat {
         match InstructionFormat::try_from_opcode_binary(self.0) {
             Ok(format) => format,
-            Err(_) => unreachable!(),
+            Err(_) => unreachable!("The opcode binary is always correct, as this is a valid opcode"),
         }
     }
 
     pub fn instruction_size(&self) -> InstructionSize {
         match InstructionSize::try_from_opcode_binary(self.0) {
             Ok(size) => size,
-            Err(_) => unreachable!(),
+            Err(_) => unreachable!("The opcode binary is always correct, as this is a valid opcode"),
         }
     }
 }

@@ -31,6 +31,8 @@ pub enum RISCVError {
     UnrecognizedExtension,
 
     #[error("Disassembler error: {0}")]
-    DisasmError(String)
-}
+    DisasmError(String),
 
+    #[error("Instruction builder error: {0}")]
+    BuilderError(String),
+}

@@ -1,7 +1,7 @@
 use std::fmt::{self};
 
 use super::Address;
-use crate::instr::{Instruction, InstructionTrait};
+use crate::instr::Instruction;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct InstructionRecord {

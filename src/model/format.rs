@@ -24,7 +24,7 @@ impl TryFrom<u32> for InstructionFormat {
     fn try_from(bits: u32) -> Result<Self, Self::Error> {
         match u8::try_from(bits & OPCODE_MASK) {
             Ok(opcode) => InstructionFormat::try_from_opcode_binary(opcode),
-            Err(_) => unreachable!(),
+            Err(_) => unreachable!("As the value is masked, it's always 7-bits, so it fits in u8"),
         }
     }
 }
