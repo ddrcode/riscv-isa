@@ -1,13 +1,11 @@
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
-use crate::model::{
-    Funct3, Funct7, InstructionFormat as IF, Mnemonic, Opcode, RISCVExtension as EXT,
-};
+use crate::model::{InstructionFormat as IF, RISCVExtension as EXT};
 
 type Row = (&'static str, IF, EXT, u8);
 
-static INSTRUCTIONS: Lazy<HashMap<u16, Row>> = Lazy::new(|| {
+pub(crate) static INSTRUCTIONS: Lazy<HashMap<u16, Row>> = Lazy::new(|| {
     HashMap::from([
         (0b01011_010_0000000, ("LR.W", IF::R, EXT::A, 32)),
         (0b01011_010_0000001, ("SC.W", IF::R, EXT::A, 32)),
@@ -91,28 +89,3 @@ static INSTRUCTIONS: Lazy<HashMap<u16, Row>> = Lazy::new(|| {
         (0b11000_011_0000000, ("RDHPMCOUNTER", IF::I, EXT::Zihpm, 32)),
     ])
 });
-
-pub fn get_mnemonic(
-    opcode: Opcode,
-    funct3: Option<Funct3>,
-    funct7: Option<Funct7>,
-) -> Option<Mnemonic> {
-    let op: u16 = (u8::from(opcode) & 0b1111100).into();
-    let f3: u16 = funct3.map_or(0, |val| u16::from(u8::from(val)));
-    let f7: u16 = funct7.map_or(0, |val| u16::from(u8::from(val)));
-    let code: u16 = (op << 8) | (f3 << 7) | f7;
-
-    INSTRUCTIONS.get(&code).map(|res| res.0.into())
-}
-
-// #[cfg(test)]
-// mod test {
-//
-//     use super::*;
-//
-//     #[test]
-//     fn test_get_mnemonic() {
-//         assert_eq!("add", get_mnemonic());
-//     }
-//
-// }
