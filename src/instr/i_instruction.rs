@@ -57,15 +57,15 @@ impl IInstruction {
 }
 
 impl InstructionTrait for IInstruction {
-    fn get_opcode(&self) -> &Opcode {
+    fn opcode(&self) -> &Opcode {
         &self.opcode
     }
 
-    fn get_format(&self) -> &crate::model::InstructionFormat {
+    fn format(&self) -> &crate::model::InstructionFormat {
         &InstructionFormat::I
     }
 
-    fn get_mnemonic(&self) -> Option<Mnemonic> {
+    fn mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
     }
 
@@ -113,7 +113,7 @@ impl fmt::Display for IInstruction {
         write!(
             f,
             "{} {}, {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
+            self.mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.rs1,
             self.imm

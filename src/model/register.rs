@@ -7,6 +7,40 @@ pub const REGISTER_MASK: u32 = 0b11111;
 pub struct Register(u8);
 
 impl Register {
+
+    pub fn zero() -> Self { Self(0) }
+    pub fn ra() -> Self { Self(1) }
+    pub fn sp() -> Self { Self(2) }
+    pub fn gp() -> Self { Self(3) }
+    pub fn tp() -> Self { Self(4) }
+    pub fn t0() -> Self { Self(5) }
+    pub fn t1() -> Self { Self(6) }
+    pub fn t2() -> Self { Self(7) }
+    pub fn s0() -> Self { Self(8) }
+    pub fn s1() -> Self { Self(9) }
+    pub fn a0() -> Self { Self(10) }
+    pub fn a1() -> Self { Self(11) }
+    pub fn a2() -> Self { Self(12) }
+    pub fn a3() -> Self { Self(13) }
+    pub fn a4() -> Self { Self(14) }
+    pub fn a5() -> Self { Self(15) }
+    pub fn a6() -> Self { Self(16) }
+    pub fn a7() -> Self { Self(17) }
+    pub fn s2() -> Self { Self(18) }
+    pub fn s3() -> Self { Self(19) }
+    pub fn s4() -> Self { Self(20) }
+    pub fn s5() -> Self { Self(21) }
+    pub fn s6() -> Self { Self(22) }
+    pub fn s7() -> Self { Self(23) }
+    pub fn s8() -> Self { Self(24) }
+    pub fn s9() -> Self { Self(25) }
+    pub fn s10() -> Self { Self(26) }
+    pub fn s11() -> Self { Self(27) }
+    pub fn t3() -> Self { Self(28) }
+    pub fn t4() -> Self { Self(29) }
+    pub fn t5() -> Self { Self(30) }
+    pub fn t6() -> Self { Self(31) }
+
     fn from_instr_bits(instr: u32, shift: u32) -> Self {
         let bits = (instr >> shift) & REGISTER_MASK;
         match Self::try_from(bits as u8) {
@@ -81,15 +115,15 @@ impl fmt::Display for Register {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let s = match self.0 {
             0 => "zero",
-            1 => "ra",
-            2 => "sp",
-            3 => "gp",
-            4 => "tp",
-            5 => "t0",
-            6 => "t1",
-            7 => "t2",
-            8 => "s0",
-            9 => "s1",
+            1 =>  "ra",
+            2 =>  "sp",
+            3 =>  "gp",
+            4 =>  "tp",
+            5 =>  "t0",
+            6 =>  "t1",
+            7 =>  "t2",
+            8 =>  "s0",
+            9 =>  "s1",
             10 => "a0",
             11 => "a1",
             12 => "a2",

@@ -69,6 +69,18 @@ impl Instruction {
             _ => None,
         }
     }
+
+    pub fn immediate(&self) -> Option<i32> {
+        use Instruction::*;
+        match self {
+            I(instr) => Some(instr.imm().into()),
+            S(instr) => Some(instr.imm().into()),
+            B(instr) => Some(instr.imm().into()),
+            U(instr) => Some(instr.imm().into()),
+            J(instr) => Some(instr.imm().into()),
+            _ => None,
+        }
+    }
 }
 
 impl TryFrom<u32> for Instruction {
@@ -138,9 +150,9 @@ macro_rules! delegate_instruction_methods {
 }
 
 delegate_instruction_methods!(Instruction, InstructionTrait,
-    fn get_opcode(&self) -> &Opcode,
-    fn get_format(&self) -> &InstructionFormat,
-    fn get_mnemonic(&self) -> Option<Mnemonic>,
+    fn opcode(&self) -> &Opcode,
+    fn format(&self) -> &InstructionFormat,
+    fn mnemonic(&self) -> Option<Mnemonic>,
     fn is_compressed(&self) -> bool,
     fn immediate_bits(&self) -> u32
 );

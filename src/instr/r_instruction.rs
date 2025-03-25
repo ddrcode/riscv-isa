@@ -67,15 +67,15 @@ impl RInstruction {
 }
 
 impl InstructionTrait for RInstruction {
-    fn get_opcode(&self) -> &Opcode {
+    fn opcode(&self) -> &Opcode {
         &self.opcode
     }
 
-    fn get_format(&self) -> &InstructionFormat {
+    fn format(&self) -> &InstructionFormat {
         &InstructionFormat::R
     }
 
-    fn get_mnemonic(&self) -> Option<Mnemonic> {
+    fn mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), Some(self.funct7))
     }
 
@@ -123,7 +123,7 @@ impl fmt::Display for RInstruction {
         write!(
             f,
             "{} {}, {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
+            self.mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.rs1,
             self.rs2

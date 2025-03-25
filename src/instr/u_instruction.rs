@@ -36,15 +36,15 @@ impl UInstruction {
 }
 
 impl InstructionTrait for UInstruction {
-    fn get_opcode(&self) -> &Opcode {
+    fn opcode(&self) -> &Opcode {
         &self.opcode
     }
 
-    fn get_format(&self) -> &InstructionFormat {
+    fn format(&self) -> &InstructionFormat {
         &InstructionFormat::U
     }
 
-    fn get_mnemonic(&self) -> Option<Mnemonic> {
+    fn mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, None, None)
     }
 
@@ -86,7 +86,7 @@ impl fmt::Display for UInstruction {
         write!(
             f,
             "{} {}, {}",
-            self.get_mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
+            self.mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
             self.rd,
             self.imm
         )
