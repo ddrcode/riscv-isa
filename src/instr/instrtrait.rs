@@ -15,7 +15,4 @@ pub trait InstructionTrait {
     }
 
     fn immediate_bits(&self) -> u32;
-
 }
-
-

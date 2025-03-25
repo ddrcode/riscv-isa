@@ -54,14 +54,18 @@ impl Opcode {
     pub fn format(&self) -> InstructionFormat {
         match InstructionFormat::try_from_opcode_binary(self.0) {
             Ok(format) => format,
-            Err(_) => unreachable!("The opcode binary is always correct, as this is a valid opcode"),
+            Err(_) => {
+                unreachable!("The opcode binary is always correct, as this is a valid opcode")
+            }
         }
     }
 
     pub fn instruction_size(&self) -> InstructionSize {
         match InstructionSize::try_from_opcode_binary(self.0) {
             Ok(size) => size,
-            Err(_) => unreachable!("The opcode binary is always correct, as this is a valid opcode"),
+            Err(_) => {
+                unreachable!("The opcode binary is always correct, as this is a valid opcode")
+            }
         }
     }
 }

@@ -6,8 +6,8 @@ pub mod instr;
 pub mod model;
 pub mod utils;
 
-pub use error::RISCVError;
 pub use disasm::*;
+pub use error::RISCVError;
 
 use std::env;
 use std::fs::File;

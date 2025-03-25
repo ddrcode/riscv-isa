@@ -4,7 +4,9 @@ use super::InstructionTrait;
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
-use crate::model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register};
+use crate::model::{
+    Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register,
+};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct SInstruction {

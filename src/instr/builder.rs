@@ -48,7 +48,6 @@ pub struct InstructionBuilder {
 }
 
 impl InstructionBuilder {
-
     /// Creates a new `InstructionBuilder` with all parameters unset.
     pub fn new() -> Self {
         Self::default()
@@ -278,7 +277,7 @@ impl From<&Instruction> for InstructionBuilder {
             rs1: instr.rs1(),
             rs2: instr.rs2(),
             rd: instr.rd(),
-            immediate: instr.immediate()
+            immediate: instr.immediate(),
         }
     }
 }

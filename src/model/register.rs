@@ -1,51 +1,61 @@
-use std::fmt;
 use crate::error::RISCVError;
+use std::fmt;
 
 pub const REGISTER_MASK: u32 = 0b11111;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Register(u8);
 
-impl Register {
+macro_rules! register_constructors {
+    ($($name:ident => $index:expr),*) => {
+        $(
+            #[doc = concat!("Constructor for `", stringify!($name), "` register")]
+            pub fn $name() -> Self { Self($index) }
+        )*
+    };
+}
 
-    pub fn zero() -> Self { Self(0) }
-    pub fn ra() -> Self { Self(1) }
-    pub fn sp() -> Self { Self(2) }
-    pub fn gp() -> Self { Self(3) }
-    pub fn tp() -> Self { Self(4) }
-    pub fn t0() -> Self { Self(5) }
-    pub fn t1() -> Self { Self(6) }
-    pub fn t2() -> Self { Self(7) }
-    pub fn s0() -> Self { Self(8) }
-    pub fn s1() -> Self { Self(9) }
-    pub fn a0() -> Self { Self(10) }
-    pub fn a1() -> Self { Self(11) }
-    pub fn a2() -> Self { Self(12) }
-    pub fn a3() -> Self { Self(13) }
-    pub fn a4() -> Self { Self(14) }
-    pub fn a5() -> Self { Self(15) }
-    pub fn a6() -> Self { Self(16) }
-    pub fn a7() -> Self { Self(17) }
-    pub fn s2() -> Self { Self(18) }
-    pub fn s3() -> Self { Self(19) }
-    pub fn s4() -> Self { Self(20) }
-    pub fn s5() -> Self { Self(21) }
-    pub fn s6() -> Self { Self(22) }
-    pub fn s7() -> Self { Self(23) }
-    pub fn s8() -> Self { Self(24) }
-    pub fn s9() -> Self { Self(25) }
-    pub fn s10() -> Self { Self(26) }
-    pub fn s11() -> Self { Self(27) }
-    pub fn t3() -> Self { Self(28) }
-    pub fn t4() -> Self { Self(29) }
-    pub fn t5() -> Self { Self(30) }
-    pub fn t6() -> Self { Self(31) }
+impl Register {
+    register_constructors! {
+        zero => 0,
+        ra => 1,
+        sp => 2,
+        gp => 3,
+        tp => 4,
+        t0 => 5,
+        t1 => 6,
+        t2 => 7,
+        s0 => 8,
+        s1 => 9,
+        a0 => 10,
+        a1 => 11,
+        a2 => 12,
+        a3 => 13,
+        a4 => 14,
+        a5 => 15,
+        a6 => 16,
+        a7 => 17,
+        s2 => 18,
+        s3 => 19,
+        s4 => 20,
+        s5 => 21,
+        s6 => 22,
+        s7 => 23,
+        s8 => 24,
+        s9 => 25,
+        s10 => 26,
+        s11 => 27,
+        t3 => 28,
+        t4 => 29,
+        t5 => 30,
+        t6 => 31
+    }
 
     fn from_instr_bits(instr: u32, shift: u32) -> Self {
         let bits = (instr >> shift) & REGISTER_MASK;
         match Self::try_from(bits as u8) {
             Ok(reg) => reg,
-            Err(_) => unreachable!("As the value is masked, it's always 5-bits, as expected")
+            Err(_) => unreachable!("As the value is masked, it's always 5-bits, as expected"),
         }
     }
 
@@ -83,7 +93,6 @@ impl TryFrom<u8> for Register {
         } else {
             Err(RISCVError::InvalidRegister)
         }
-
     }
 }
 
@@ -115,15 +124,15 @@ impl fmt::Display for Register {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let s = match self.0 {
             0 => "zero",
-            1 =>  "ra",
-            2 =>  "sp",
-            3 =>  "gp",
-            4 =>  "tp",
-            5 =>  "t0",
-            6 =>  "t1",
-            7 =>  "t2",
-            8 =>  "s0",
-            9 =>  "s1",
+            1 => "ra",
+            2 => "sp",
+            3 => "gp",
+            4 => "tp",
+            5 => "t0",
+            6 => "t1",
+            7 => "t2",
+            8 => "s0",
+            9 => "s1",
             10 => "a0",
             11 => "a1",
             12 => "a2",
@@ -146,8 +155,35 @@ impl fmt::Display for Register {
             29 => "t4",
             30 => "t5",
             31 => "t6",
-            _ => unreachable!()
+            _ => unreachable!(),
         };
         write!(f, "{}", s)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_try_from_u8() {
+        assert!(Register::try_from(0).is_ok());
+        assert!(Register::try_from(31).is_ok());
+        assert!(Register::try_from(32).is_err());
+        assert!(Register::try_from(255).is_err());
+    }
+
+    #[test]
+    fn test_from_rs1_bits() {
+        let instr: u32 = 13 << 15;
+        let reg = Register::from_rs1_bits(instr);
+        assert_eq!(reg, Register::a3());
+    }
+
+    #[test]
+    fn test_into_rs1_bits() {
+        let reg = Register::ra();
+        let bits = reg.into_rs1_bits();
+        assert_eq!(bits, 1 << 15);
     }
 }
