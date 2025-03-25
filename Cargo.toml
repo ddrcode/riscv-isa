@@ -1,8 +1,18 @@
 [package]
 name = "riscv-isa"
 version = "0.1.0"
+authors = ["David de Rosier"]
+description = "RISC-V instructions model and disassembler"
+keywords = ["RISC-V", "disassembler", "isa"]
+categories = ["data-structures", "development-tools", "value-formatting"]
 edition = "2021"
+repository = "https://github.com/ddrcode/riscv-isa"
+license = "MIT"
 
 [dependencies]
 once_cell = "1.21.1"
 thiserror = "2.0.12"
+
+[lints.rust]
+unsafe_code = "forbid"
+

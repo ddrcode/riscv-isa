@@ -113,7 +113,7 @@
 //! # }
 //! ```
 //!
-//! The above example can be written much more elegently with the `InstructionBuilder`:
+//! The above example can be written much more elegantly with the `InstructionBuilder`:
 //!
 //! ```
 //! # use riscv_isa::{InstructionBuilder, Opcode, Funct3, Immediate, RISCVError, Register};

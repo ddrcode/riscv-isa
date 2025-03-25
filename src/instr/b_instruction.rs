@@ -82,8 +82,8 @@ impl InstructionTrait for BInstruction {
     }
 
     fn immediate_bits(&self) -> u32 {
-        let imm = self.imm.into_raw_bits();
-        let res = 0u32;
+        let _imm = self.imm.into_raw_bits();
+        let _res = 0u32;
         todo!();
     }
 }

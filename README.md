@@ -2,7 +2,7 @@
 
 A Rust library for representing the RISC-V Instruction Set Architecture (ISA) and for disassembling RISC-V binary code. This project aims to provide a rock‑solid, type‑safe model for RISC-V instructions, along with a disassembler that leverages this model to produce human‑readable assembly.
 
-**Note** - the library is still under heavy development, and the API can change from version to version, providing breaking changes. 
+**Note** - the library is still under heavy development, and the API can change from version to version, providing breaking changes.
 
 ## Features
 
@@ -17,7 +17,15 @@ A Rust library for representing the RISC-V Instruction Set Architecture (ISA) an
 
 - **Idiomatic Rust Design**
   - Minimal runtime overhead with extensive compile-time checks.
-  - Clear, modular design that separates the core ISA model from presentation and formatting logic.
+
+## Current limitations
+
+The current version of the library has some limitations, that are planned to be addressed
+in the future versions:
+
+- support for compressed instruction (16-bit instructions),
+- support for custom instructions of size different from 32-bits,
+- assembly code parsing
 
 ## Examples of use
 
@@ -26,11 +34,9 @@ that takes RISC-V binary as an input and prints disassembled code to the console
 
 
 ```Rust
-
 use std::env;
 use std::fs::File;
 use std::io::{BufReader, Result};
-
 use riscv_isa::Disasm;
 
 fn main() -> Result<()> {
@@ -64,7 +70,7 @@ The above example could be simplified even further, by skipping the loop entirel
 ``` Rust
     let mut disasm = Disasm::new(reader);
     if let Err(e) = disasm.print_all() {
-        println!("Error disassembling instruction: {:?}", e);
+        eprintln!("Error disassembling instruction: {:?}", e);
     }
 ```
 
@@ -78,7 +84,6 @@ A developer has a full control over how the disassembled code is formatted:
 
     let mut disasm = Disasm::with_config(reader, config);
     disasm.print_all()?;
-
 ```
 
 Besides disassembly, the library can be also used to build instructions from scratch
@@ -86,16 +91,27 @@ and produce instruction binary (so it's possible to build an assembler with it).
 The code below creates an I-type instruction (`LBU s1, 0xff(a0)`):
 
 ```Rust
-    let opcode = Opcode::try_from(0b0000011)?;
-    let rs1 = Register::try_from("a0")?;
+    let opcode = Opcode::try_from(0b0000011u32)?;
+    let rs1 = Register::a0();
     let rd = Register::try_from(9)?; // s1
-    let funct3 = Funct3::try_from(0b100)?;
-    let imm = Immediate::<0:11>::try_from(0xff)?;
+    let funct3 = Funct3::try_from(0b100u8)?;
+    let imm = Immediate::<0, 11>::try_from(0xff)?;
     let instr = IInstruction::new(opcode, rs1, rd, funct3, imm)?;
 
     let instr_binary = u32::from(instr);
-    let instr_bytes = instr_binary.into_le_bytes();
+    let instr_bytes = instr_binary.to_le_bytes();
+```
 
+The above example can be written much more elegantly with `InstructionBuilder`:
+
+```Rust
+    let instr = InstructionBuilder::new()
+        .set_opcode(Opcode::try_from(0b0000011u32)?)
+        .set_rs1(Register::a0())
+        .set_rd(Register::s1())
+        .set_funct3(Funct3::try_from(0b100u8)?)
+        .set_immediate(0xff)
+        .build()?;
 ```
 
 An individual instruction structure can be created directly from instruction binary,
@@ -103,10 +119,11 @@ without calling disassembler:
 
 ```Rust
     let instr = Instruction::try_from(0x00a5d463)?;
-    println!("{}, {}", instr.format(), instr.extension()); // "B, I"
-    println!("{}", instr); // "BLT a1, a0, 0x101c4"
+    assert_eq!("B", instr.format().to_string());
+    assert_eq!("BLT a1, a0, 0x101c4", instr.to_string());
 ```
 
 ## License
 
-MIT License. See [LICENCE file](LICENSE) for details.
+Licensed under MIT license
+   ([LICENSE](LICENSE) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
