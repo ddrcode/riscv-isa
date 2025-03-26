@@ -20,4 +20,7 @@ The argument of the tool is a space-separated list of extensions
 (each starting with `rv_`, `rv32_` or `rv64_` prefix).
 The `'rv*'` argument generates all instructions.
 
+## Local generators
 
+The `instr_gen.js` is a custom script that generates Rust files
+with instructions specifically for this project.

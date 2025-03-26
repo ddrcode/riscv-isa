@@ -100,7 +100,13 @@ impl TryFrom<u32> for SInstruction {
 }
 
 impl From<SInstruction> for u32 {
-    fn from(instr: SInstruction) -> u32 {
+    fn from(instr: SInstruction) -> Self {
+        u32::from(&instr)
+    }
+}
+
+impl From<&SInstruction> for u32 {
+    fn from(instr: &SInstruction) -> u32 {
         u32::from(instr.opcode)
             | u32::from(instr.funct3)
             | instr.rs1.into_rs1_bits()

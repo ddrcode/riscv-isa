@@ -14,6 +14,8 @@ pub enum RISCVExtension {
     V,
     Sstc,
     Svadu,
+    System,
+    Sdext,
     Zawrs,
     Zbb,
     Zbc,
