@@ -9,7 +9,7 @@ use crate::{
 pub struct Disasm {
     reader: Box<dyn Read>,
     formatter: InstructionFormatter,
-    addr: Address
+    addr: Address,
 }
 
 impl Disasm {
@@ -22,7 +22,7 @@ impl Disasm {
         Self {
             reader: Box::new(reader),
             formatter: InstructionFormatter::new(config),
-            addr
+            addr,
         }
     }
 

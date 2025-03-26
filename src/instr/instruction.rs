@@ -104,6 +104,12 @@ impl TryFrom<u32> for Instruction {
 
 impl From<Instruction> for u32 {
     fn from(instr: Instruction) -> Self {
+        u32::from(&instr)
+    }
+}
+
+impl From<&Instruction> for u32 {
+    fn from(instr: &Instruction) -> Self {
         use Instruction::*;
         match instr {
             R(instr) => u32::from(instr),
@@ -153,7 +159,6 @@ delegate_instruction_methods!(Instruction, InstructionTrait,
     fn opcode(&self) -> &Opcode,
     fn format(&self) -> &InstructionFormat,
     fn mnemonic(&self) -> Option<Mnemonic>,
-    fn is_compressed(&self) -> bool,
     fn immediate_bits(&self) -> u32
 );
 

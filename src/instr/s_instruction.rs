@@ -4,7 +4,9 @@ use super::InstructionTrait;
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
-use crate::model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register};
+use crate::model::{
+    Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register,
+};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct SInstruction {
@@ -98,7 +100,13 @@ impl TryFrom<u32> for SInstruction {
 }
 
 impl From<SInstruction> for u32 {
-    fn from(instr: SInstruction) -> u32 {
+    fn from(instr: SInstruction) -> Self {
+        u32::from(&instr)
+    }
+}
+
+impl From<&SInstruction> for u32 {
+    fn from(instr: &SInstruction) -> u32 {
         u32::from(instr.opcode)
             | u32::from(instr.funct3)
             | instr.rs1.into_rs1_bits()

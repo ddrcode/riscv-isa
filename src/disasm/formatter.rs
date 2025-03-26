@@ -1,6 +1,7 @@
 use std::fmt::Write;
 
 use crate::{
+    data::find_system_mnemonic,
     instr::{Instruction, InstructionTrait},
     model::{Mnemonic, Register},
 };
@@ -77,6 +78,7 @@ impl InstructionFormatter {
             self.optional_mnemonic(instr.mnemonic()),
             self.config.mnemonic_separator
         );
+
         let s = &self.config.register_separator;
         let result = match instr {
             R(i) => write!(
@@ -88,15 +90,23 @@ impl InstructionFormatter {
                 s,
                 self.register(&i.rs2())
             ),
-            I(i) => write!(
-                out,
-                "{},{}{},{}{}",
-                self.register(&i.rd()),
-                s,
-                self.register(&i.rs1()),
-                s,
-                self.number(i.imm().into())
-            ),
+
+            I(i) => {
+                if find_system_mnemonic(instr.into()).is_some() {
+                    Ok(())
+                } else {
+                    write!(
+                        out,
+                        "{},{}{},{}{}",
+                        self.register(&i.rd()),
+                        s,
+                        self.register(&i.rs1()),
+                        s,
+                        self.number(i.imm().into())
+                    )
+                }
+            }
+
             S(i) => write!(
                 out,
                 "{},{}{}({})",
@@ -105,6 +115,7 @@ impl InstructionFormatter {
                 self.number(i.imm().into()),
                 self.register(&i.rs1())
             ),
+
             B(i) => write!(
                 out,
                 "{},{}{},{}{}",
@@ -114,6 +125,7 @@ impl InstructionFormatter {
                 s,
                 self.number(i.imm().into())
             ),
+
             U(i) => write!(
                 out,
                 "{},{}{}",
@@ -121,6 +133,7 @@ impl InstructionFormatter {
                 s,
                 self.number(i.imm().into())
             ),
+
             J(i) => write!(
                 out,
                 "{},{}{}",
@@ -130,7 +143,7 @@ impl InstructionFormatter {
             ),
         };
         if result.is_err() {
-            // Handle the error appropriately
+            todo!();
         }
         out
     }
@@ -162,7 +175,7 @@ impl InstructionFormatter {
     ///
     /// A formatted number string.
     pub fn number(&self, n: i32) -> String {
-        format!("{:x}", n)
+        (self.config.immediate_format)(n)
     }
 
     /// Formats an address.

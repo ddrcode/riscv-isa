@@ -7,5 +7,3 @@ pub trait RawBitsConverter<T> {
 
     fn into_raw_bits(&self) -> T;
 }
-
-

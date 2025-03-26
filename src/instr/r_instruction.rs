@@ -107,7 +107,13 @@ impl TryFrom<u32> for RInstruction {
 }
 
 impl From<RInstruction> for u32 {
-    fn from(instr: RInstruction) -> u32 {
+    fn from(instr: RInstruction) -> Self {
+        u32::from(&instr)
+    }
+}
+
+impl From<&RInstruction> for u32 {
+    fn from(instr: &RInstruction) -> u32 {
         let mut bits: u32 = instr.opcode.into();
         bits |= u32::from(instr.funct3);
         bits |= u32::from(instr.funct7);

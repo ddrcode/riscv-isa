@@ -6,8 +6,8 @@ pub mod instr;
 pub mod model;
 pub mod utils;
 
-pub use error::RISCVError;
 pub use disasm::*;
+pub use error::RISCVError;
 
 use std::env;
 use std::fs::File;
@@ -26,8 +26,8 @@ fn main() -> Result<()> {
 
     let mut config = DisasmConfig::default();
     config.mnemonic_uppercase = false;
+    config.mnemonic_separator = "\t".to_string();
     config.register_separator = "\t".to_string();
-    config.immediate_format = |imm: i32| format!("{:08x}", imm);
 
     let mut disasm = Disasm::with_config(reader, config);
     if let Err(e) = disasm.print_all() {

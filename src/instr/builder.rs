@@ -1,7 +1,8 @@
 use crate::{
+    data::find_instr_from_mnemonic,
     error::RISCVError,
     instr::{BInstruction, IInstruction, JInstruction, RInstruction, SInstruction, UInstruction},
-    model::{Funct3, Funct7, Immediate, InstructionFormat, Opcode, Register},
+    model::{Funct3, Funct7, Immediate, InstructionFormat, Opcode, Register, Mnemonic},
 };
 
 use super::{Instruction, InstructionTrait};
@@ -48,10 +49,23 @@ pub struct InstructionBuilder {
 }
 
 impl InstructionBuilder {
-
     /// Creates a new `InstructionBuilder` with all parameters unset.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn from_mnemonic(mnemonic: Mnemonic) -> Result<Self, RISCVError> {
+        let data =
+            find_instr_from_mnemonic(mnemonic).ok_or(RISCVError::BuilderError("".to_string()))?;
+        Ok(Self {
+            opcode: Some(data.0),
+            funct3: Some(data.1),
+            funct7: Some(data.2),
+            rs1: None,
+            rs2: None,
+            rd: None,
+            immediate: None,
+        })
     }
 
     /// Sets the opcode for the instruction.
@@ -278,7 +292,7 @@ impl From<&Instruction> for InstructionBuilder {
             rs1: instr.rs1(),
             rs2: instr.rs2(),
             rd: instr.rd(),
-            immediate: instr.immediate()
+            immediate: instr.immediate(),
         }
     }
 }
@@ -295,5 +309,19 @@ impl From<Instruction> for InstructionBuilder {
     /// An `InstructionBuilder` initialized with the fields from the provided instruction.
     fn from(instr: Instruction) -> Self {
         InstructionBuilder::from(&instr)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_from_mnemonic() -> Result<(), RISCVError> {
+        let b = InstructionBuilder::from_mnemonic("add".into())?;
+        assert!(b.opcode().is_ok());
+        assert!(b.funct3().is_ok());
+        assert!(b.funct7().is_ok());
+        Ok(())
     }
 }

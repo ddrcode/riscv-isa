@@ -60,10 +60,10 @@ impl BInstruction {
 fn get_raw_imm(instr: &u32) -> u32 {
     let mut res = 0u32;
 
-    copy_bits(instr, 8, &mut res, 1, 4);
-    copy_bits(instr, 25, &mut res, 5, 6);
-    copy_bit(instr, 7, &mut res, 11);
-    copy_bit(instr, 31, &mut res, 12);
+    copy_bits(instr, 8, &mut res, 0, 4);
+    copy_bits(instr, 25, &mut res, 4, 6);
+    copy_bit(instr, 7, &mut res, 10);
+    copy_bit(instr, 31, &mut res, 11);
 
     res
 }
@@ -82,9 +82,13 @@ impl InstructionTrait for BInstruction {
     }
 
     fn immediate_bits(&self) -> u32 {
-        let _imm = self.imm.into_raw_bits();
-        let _res = 0u32;
-        todo!();
+        let imm = &self.imm.into_raw_bits();
+        let mut res = 0u32;
+        copy_bits(imm, 0, &mut res, 8, 4);
+        copy_bits(imm, 4, &mut res, 25, 6);
+        copy_bit(imm, 10, &mut res, 7);
+        copy_bit(imm, 11, &mut res, 31);
+        res
     }
 }
 
@@ -113,7 +117,13 @@ impl TryFrom<u32> for BInstruction {
 }
 
 impl From<BInstruction> for u32 {
-    fn from(instr: BInstruction) -> u32 {
+    fn from(instr: BInstruction) -> Self {
+        u32::from(&instr)
+    }
+}
+
+impl From<&BInstruction> for u32 {
+    fn from(instr: &BInstruction) -> u32 {
         u32::from(instr.opcode)
             | u32::from(instr.funct3)
             | instr.rs1.into_rs1_bits()
@@ -132,5 +142,18 @@ impl fmt::Display for BInstruction {
             self.rs2,
             self.imm
         )
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_immediate_bits() -> Result<(), RISCVError> {
+        let instr = BInstruction::try_from(0x00b64463)?; // blt a2, a1, 8
+        assert_eq!(0b1000 << 7, instr.immediate_bits());
+        assert_eq!(8, instr.imm().into());
+        Ok(())
     }
 }

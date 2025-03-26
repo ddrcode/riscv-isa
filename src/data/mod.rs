@@ -1,3 +1,7 @@
 mod instructions;
+mod access;
+mod system;
 
-pub use instructions::get_mnemonic;
+pub (crate) use instructions::INSTRUCTIONS;
+pub (crate) use system::SYSTEM_INSTRUCTIONS;
+pub use access::*;
