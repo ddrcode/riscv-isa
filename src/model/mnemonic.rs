@@ -1,23 +1,203 @@
 use std::fmt;
 
+use crate::{data::INSTRUCTIONS, UNKNOWN_MNEMONIC};
 
-#[derive(Debug, PartialEq)]
-pub struct Mnemonic(&'static str);
+#[non_exhaustive]
+#[repr(u16)]
+#[allow(non_camel_case_types)]
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum Mnemonic {
+    Add = 0x000c,
+    Addi = 0x0004,
+    And = 0x00ec,
+    Andi = 0x00e4,
+    Andn = 0x20ec,
+    Auipc = 0x0005,
+    Bclr = 0x242c,
+    Beq = 0x0018,
+    Bext = 0x24ac,
+    Bge = 0x00b8,
+    Bgeu = 0x00f8,
+    Binv = 0x342c,
+    Blt = 0x0098,
+    Bltu = 0x00d8,
+    Bne = 0x0038,
+    Bset = 0x142c,
+    Clmul = 0x052c,
+    Clmulh = 0x056c,
+    Clmulr = 0x054c,
+    Csrrc = 0x007c,
+    Csrrci = 0x00fc,
+    Csrrs = 0x005c,
+    Csrrsi = 0x00dc,
+    Csrrw = 0x003c,
+    Csrrwi = 0x00bc,
+    Czero_eqz = 0x07ac,
+    Czero_nez = 0x07ec,
+    Div = 0x018c,
+    Divu = 0x01ac,
+    Fence = 0x0003,
+    Fence_i = 0x0023,
+    Feq_d = 0x5154,
+    Feq_h = 0x5254,
+    Feq_q = 0x5354,
+    Feq_s = 0x5054,
+    Fld = 0x0061,
+    Fle_d = 0x5114,
+    Fle_h = 0x5214,
+    Fle_q = 0x5314,
+    Fle_s = 0x5014,
+    Fleq_d = 0x5194,
+    Fleq_h = 0x5294,
+    Fleq_q = 0x5394,
+    Fleq_s = 0x5094,
+    Flh = 0x0021,
+    Flq = 0x0081,
+    Flt_d = 0x5134,
+    Flt_h = 0x5234,
+    Flt_q = 0x5334,
+    Flt_s = 0x5034,
+    Fltq_d = 0x51b4,
+    Fltq_h = 0x52b4,
+    Fltq_q = 0x53b4,
+    Fltq_s = 0x50b4,
+    Flw = 0x0041,
+    Fmax_d = 0x1534,
+    Fmax_h = 0x1634,
+    Fmax_q = 0x1734,
+    Fmax_s = 0x1434,
+    Fmaxm_d = 0x1574,
+    Fmaxm_h = 0x1674,
+    Fmaxm_q = 0x1774,
+    Fmaxm_s = 0x1474,
+    Fmin_d = 0x1514,
+    Fmin_h = 0x1614,
+    Fmin_q = 0x1714,
+    Fmin_s = 0x1414,
+    Fminm_d = 0x1554,
+    Fminm_h = 0x1654,
+    Fminm_q = 0x1754,
+    Fminm_s = 0x1454,
+    Fsd = 0x0069,
+    Fsgnj_d = 0x1114,
+    Fsgnj_h = 0x1214,
+    Fsgnj_q = 0x1314,
+    Fsgnj_s = 0x1014,
+    Fsgnjn_d = 0x1134,
+    Fsgnjn_h = 0x1234,
+    Fsgnjn_q = 0x1334,
+    Fsgnjn_s = 0x1034,
+    Fsgnjx_d = 0x1154,
+    Fsgnjx_h = 0x1254,
+    Fsgnjx_q = 0x1354,
+    Fsgnjx_s = 0x1054,
+    Fsh = 0x0029,
+    Fsq = 0x0089,
+    Fsw = 0x0049,
+    Jal = 0x001b,
+    Jalr = 0x0019,
+    Lb = 0x0000,
+    Lbu = 0x0080,
+    Lh = 0x0020,
+    Lhu = 0x00a0,
+    Lui = 0x000d,
+    Lw = 0x0040,
+    Max = 0x05cc,
+    Maxu = 0x05ec,
+    Min = 0x058c,
+    Minu = 0x05ac,
+    Mul = 0x010c,
+    Mulh = 0x012c,
+    Mulhsu = 0x014c,
+    Mulhu = 0x016c,
+    Or = 0x00cc,
+    Ori = 0x00c4,
+    Orn = 0x20cc,
+    Pack = 0x048c,
+    Packh = 0x04ec,
+    Rem = 0x01cc,
+    Remu = 0x01ec,
+    Rol = 0x302c,
+    Ror = 0x30ac,
+    Sb = 0x0008,
+    Sh = 0x0028,
+    Sh1add = 0x104c,
+    Sh2add = 0x108c,
+    Sh3add = 0x10cc,
+    Sll = 0x002c,
+    Slt = 0x004c,
+    Slti = 0x0044,
+    Sltiu = 0x0064,
+    Sltu = 0x006c,
+    Sra = 0x20ac,
+    Srl = 0x00ac,
+    Sub = 0x200c,
+    Sw = 0x0048,
+    Vadc_vim = 0x2075,
+    Vadc_vvm = 0x2015,
+    Vadc_vxm = 0x2095,
+    Vaeskf1_vi = 0x455d,
+    Vaeskf2_vi = 0x555d,
+    Vcompress_vm = 0x2f55,
+    Vfmerge_vfm = 0x2eb5,
+    Vghsh_vv = 0x595d,
+    Vmadc_vi = 0x2375,
+    Vmadc_vim = 0x2275,
+    Vmadc_vv = 0x2315,
+    Vmadc_vvm = 0x2215,
+    Vmadc_vx = 0x2395,
+    Vmadc_vxm = 0x2295,
+    Vmand_mm = 0x3355,
+    Vmandn_mm = 0x3155,
+    Vmerge_vim = 0x2e75,
+    Vmerge_vvm = 0x2e15,
+    Vmerge_vxm = 0x2e95,
+    Vmnand_mm = 0x3b55,
+    Vmnor_mm = 0x3d55,
+    Vmor_mm = 0x3555,
+    Vmorn_mm = 0x3955,
+    Vmsbc_vv = 0x2715,
+    Vmsbc_vvm = 0x2615,
+    Vmsbc_vx = 0x2795,
+    Vmsbc_vxm = 0x2695,
+    Vmxnor_mm = 0x3f55,
+    Vmxor_mm = 0x3755,
+    Vsbc_vvm = 0x2415,
+    Vsbc_vxm = 0x2495,
+    Vsetvl = 0x40f5,
+    Vsha2ch_vv = 0x5d5d,
+    Vsha2cl_vv = 0x5f5d,
+    Vsha2ms_vv = 0x5b5d,
+    Vsm3c_vi = 0x575d,
+    Vsm3me_vv = 0x415d,
+    Vsm4k_vi = 0x435d,
+    Xnor = 0x208c,
+    Xor = 0x008c,
+    Xori = 0x0084,
+    Xperm4 = 0x144c,
+    Xperm8 = 0x148c,
+}
 
-impl From<&'static str> for Mnemonic {
-    fn from(value: &'static str) -> Self {
-        Self(value)
+impl From<Mnemonic> for u16 {
+    fn from(mnemonic: Mnemonic) -> Self {
+        mnemonic.into()
     }
 }
 
-impl From<Mnemonic> for &'static str {
-    fn from(value: Mnemonic) -> Self {
-        value.0
+impl From<&Mnemonic> for u16 {
+    fn from(mnemonic: &Mnemonic) -> Self {
+        mnemonic.into()
     }
 }
 
 impl fmt::Display for Mnemonic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(
+            f,
+            "{}",
+            INSTRUCTIONS
+                .get(&self.into())
+                .map_or(UNKNOWN_MNEMONIC, |row| row.0)
+        )
     }
 }

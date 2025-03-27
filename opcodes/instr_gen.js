@@ -40,10 +40,12 @@ const parseKey = encoding => {
 };
 
 const processDef = def => {
-    const key = def.key.toString(16);
+    const name = def.mnemonic;
+    const mnemonic = name[0].toUpperCase() + name.slice(1);
+    const key = def.key.toString(16).padStart(4, "0");
     const ext_raw = def.extension[0];
     const ext = String(ext_raw[0]).toUpperCase() + ext_raw.slice(1);
-    const rust = `        (0x${key}, ("${def.mnemonic}", EXT::${ext}, ${def.arch})),`;
+    const rust = `        (0x${key}, ("${name}", M::${mnemonic}, EXT::${ext}, ${def.arch})),`;
     return rust;
 }
 
@@ -53,9 +55,9 @@ const getRustCode = entries => {
 
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
-use crate::model::RISCVExtension as EXT;
+use crate::model::{RISCVExtension as EXT, Mnemonic as M};
 
-type Row = (&'static str, EXT, u8);
+type Row = (&'static str, M, EXT, u8);
 
 pub (crate) static INSTRUCTIONS: Lazy<HashMap<u16, Row>> = Lazy::new(|| {
     HashMap::from([
