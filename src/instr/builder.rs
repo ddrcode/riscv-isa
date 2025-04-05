@@ -2,7 +2,7 @@ use crate::{
     data::get_instruction_from_mnemonic,
     error::RISCVError,
     instr::{BInstruction, IInstruction, JInstruction, RInstruction, SInstruction, UInstruction},
-    model::{Funct3, Funct7, Immediate, InstructionFormat, Opcode, Register, Mnemonic},
+    model::{Funct3, Funct7, Immediate, InstructionFormat, Mnemonic, Opcode, Register},
 };
 
 use super::{Instruction, InstructionTrait};
@@ -55,12 +55,12 @@ impl InstructionBuilder {
     }
 
     pub fn from_mnemonic(mnemonic: Mnemonic) -> Result<Self, RISCVError> {
-        let data =
-            get_instruction_from_mnemonic(&mnemonic).ok_or(RISCVError::BuilderError("".to_string()))?;
+        let data = get_instruction_from_mnemonic(&mnemonic)
+            .ok_or(RISCVError::BuilderError("".to_string()))?;
         Ok(Self {
-            opcode: Some(data.0),
-            funct3: Some(data.1),
-            funct7: Some(data.2),
+            opcode: Some(data.opcode()),
+            funct3: data.funct3(),
+            funct7: data.funct7(),
             rs1: None,
             rs2: None,
             rd: None,

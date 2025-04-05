@@ -1,4 +1,4 @@
-use super::{INSTRUCTIONS, SYSTEM_INSTRUCTIONS};
+use super::{InstructionDef, INSTRUCTIONS, OFF, SYSTEM_INSTRUCTIONS};
 use crate::model::{Funct3, Funct7, Mnemonic, Opcode};
 
 pub fn get_mnemonic(
@@ -12,6 +12,17 @@ pub fn get_mnemonic(
     let code: u16 = op | (f3 << 5) | (f7 << 8);
 
     // INSTRUCTIONS.get(&code).map(|res| res.1)
+    //
+    //
+
+    for def in INSTRUCTIONS.iter() {
+        if let Some(key) = def.search_key {
+            if key == code {
+                return Some(def.mnemonic)
+            }
+        }
+    }
+
     None
 }
 
@@ -19,7 +30,11 @@ pub fn get_system_mnemonic(instr: u32) -> Option<Mnemonic> {
     SYSTEM_INSTRUCTIONS.get(&instr).map(|res| res.1)
 }
 
-pub fn get_instruction_from_mnemonic(mnemonic: &Mnemonic) -> Option<(Opcode, Funct3, Funct7)> {
-    None
+pub fn get_instruction_from_mnemonic(mnemonic: &Mnemonic) -> Option<OFF> {
+    let def = get_instruction_def(mnemonic);
+    OFF::try_from(def).ok()
 }
 
+pub fn get_instruction_def(mnemonic: &Mnemonic) -> &InstructionDef {
+    &INSTRUCTIONS[u16::from(mnemonic) as usize]
+}

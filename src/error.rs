@@ -35,4 +35,7 @@ pub enum RISCVError {
 
     #[error("Instruction builder error: {0}")]
     BuilderError(String),
+
+    #[error("Opcode-funct3-funct7 (OFF) error: {0}")]
+    OFFError(String),
 }
