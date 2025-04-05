@@ -92,7 +92,7 @@ impl fmt::Display for UInstruction {
         write!(
             f,
             "{} {}, {}",
-            self.mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
+            self.mnemonic().map_or(UNKNOWN_MNEMONIC.to_string(), |m|m.to_string()),
             self.rd,
             self.imm
         )

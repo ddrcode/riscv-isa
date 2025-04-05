@@ -1,6 +1,6 @@
 use crate::{
     config::UNKNOWN_MNEMONIC,
-    data::{find_system_mnemonic, get_mnemonic},
+    data::{get_mnemonic, get_system_mnemonic},
     error::RISCVError,
     model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
 };
@@ -67,7 +67,7 @@ impl InstructionTrait for IInstruction {
 
     fn mnemonic(&self) -> Option<Mnemonic> {
         get_mnemonic(self.opcode, Some(self.funct3), None)
-            .or_else(|| find_system_mnemonic(self.into()))
+            .or_else(|| get_system_mnemonic(self.into()))
     }
 
     fn immediate_bits(&self) -> u32 {
@@ -117,13 +117,14 @@ impl From<&IInstruction> for u32 {
 
 impl fmt::Display for IInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(m) = find_system_mnemonic(self.into()) {
+        if let Some(m) = get_system_mnemonic(self.into()) {
             write!(f, "{}", m)
         } else {
             write!(
                 f,
                 "{} {}, {}, {}",
-                self.mnemonic().unwrap_or(UNKNOWN_MNEMONIC.into()),
+                self.mnemonic()
+                    .map_or(UNKNOWN_MNEMONIC.to_string(), |m| m.to_string()),
                 self.rd,
                 self.rs1,
                 self.imm

@@ -1,7 +1,7 @@
 use std::fmt::Write;
 
 use crate::{
-    data::find_system_mnemonic,
+    data::get_system_mnemonic,
     instr::{Instruction, InstructionTrait},
     model::{Mnemonic, Register},
 };
@@ -92,7 +92,7 @@ impl InstructionFormatter {
             ),
 
             I(i) => {
-                if find_system_mnemonic(instr.into()).is_some() {
+                if get_system_mnemonic(instr.into()).is_some() {
                     Ok(())
                 } else {
                     write!(

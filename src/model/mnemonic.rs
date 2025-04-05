@@ -176,6 +176,13 @@ pub enum Mnemonic {
     Xori = 0x0084,
     Xperm4 = 0x144c,
     Xperm8 = 0x148c,
+
+    Ecall = 0xfff1,
+    Ebreak = 0xfff2,
+    Wfi = 0xfff3,
+    Mret = 0xfff4,
+    Sret = 0xfff5,
+    Dret = 0xfff6
 }
 
 impl From<Mnemonic> for u16 {
