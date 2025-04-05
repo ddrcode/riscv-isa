@@ -1,8 +1,10 @@
 mod extension;
+mod extension_impl;
 mod format;
 mod funct;
 mod immediate;
 mod mnemonic;
+mod mnemonic_impl;
 mod opcode;
 mod raw_bits_converter;
 mod register;

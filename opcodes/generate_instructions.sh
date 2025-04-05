@@ -1,2 +1,2 @@
-node instr_gen.js instr_dict.json ../src/data/instructions.rs
+node instr_gen.js instr_dict.json ../src
 

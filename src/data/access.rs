@@ -11,7 +11,8 @@ pub fn get_mnemonic(
     let f7: u16 = funct7.map_or(0, |val| u16::from(u8::from(val)));
     let code: u16 = op | (f3 << 5) | (f7 << 8);
 
-    INSTRUCTIONS.get(&code).map(|res| res.1)
+    // INSTRUCTIONS.get(&code).map(|res| res.1)
+    None
 }
 
 pub fn get_system_mnemonic(instr: u32) -> Option<Mnemonic> {

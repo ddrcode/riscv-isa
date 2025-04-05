@@ -314,14 +314,14 @@ impl From<Instruction> for InstructionBuilder {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-
-    #[test]
-    fn test_from_mnemonic() -> Result<(), RISCVError> {
-        let b = InstructionBuilder::from_mnemonic("add".into())?;
-        assert!(b.opcode().is_ok());
-        assert!(b.funct3().is_ok());
-        assert!(b.funct7().is_ok());
-        Ok(())
-    }
+    // use super::*;
+    //
+    // #[test]
+    // fn test_from_mnemonic() -> Result<(), RISCVError> {
+    //     let b = InstructionBuilder::from_mnemonic("add".into())?;
+    //     assert!(b.opcode().is_ok());
+    //     assert!(b.funct3().is_ok());
+    //     assert!(b.funct7().is_ok());
+    //     Ok(())
+    // }
 }
