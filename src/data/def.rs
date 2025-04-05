@@ -1,7 +1,5 @@
 use crate::model::{Mnemonic, RISCVExtension};
 
-static KOZA: [u8; 3] = [1,2,3];
-
 pub struct InstructionDef {
     pub name: String,
     pub mnemonic: Mnemonic,

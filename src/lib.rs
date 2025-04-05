@@ -142,7 +142,7 @@
 //! # }
 //! ```
 
-mod config;
+pub(crate) mod config;
 pub mod data;
 mod disasm;
 mod error;

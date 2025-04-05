@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{data::INSTRUCTIONS, UNKNOWN_MNEMONIC};
+use crate::{config::UNKNOWN_MNEMONIC, data::INSTRUCTIONS};
 
 #[non_exhaustive]
 #[repr(u16)]
@@ -182,7 +182,7 @@ pub enum Mnemonic {
     Wfi = 0xfff3,
     Mret = 0xfff4,
     Sret = 0xfff5,
-    Dret = 0xfff6
+    Dret = 0xfff6,
 }
 
 impl From<Mnemonic> for u16 {

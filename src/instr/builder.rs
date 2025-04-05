@@ -1,5 +1,5 @@
 use crate::{
-    data::find_instr_from_mnemonic,
+    data::get_instruction_from_mnemonic,
     error::RISCVError,
     instr::{BInstruction, IInstruction, JInstruction, RInstruction, SInstruction, UInstruction},
     model::{Funct3, Funct7, Immediate, InstructionFormat, Opcode, Register, Mnemonic},
@@ -56,7 +56,7 @@ impl InstructionBuilder {
 
     pub fn from_mnemonic(mnemonic: Mnemonic) -> Result<Self, RISCVError> {
         let data =
-            find_instr_from_mnemonic(mnemonic).ok_or(RISCVError::BuilderError("".to_string()))?;
+            get_instruction_from_mnemonic(&mnemonic).ok_or(RISCVError::BuilderError("".to_string()))?;
         Ok(Self {
             opcode: Some(data.0),
             funct3: Some(data.1),

@@ -18,8 +18,7 @@ pub fn get_system_mnemonic(instr: u32) -> Option<Mnemonic> {
     SYSTEM_INSTRUCTIONS.get(&instr).map(|res| res.1)
 }
 
-pub fn get_instruction_from_mnemonic(mnemonic: &Mnemonic) -> Option<Opcode, Funct3, Funct7> {
-
+pub fn get_instruction_from_mnemonic(mnemonic: &Mnemonic) -> Option<(Opcode, Funct3, Funct7)> {
     None
 }
 
