@@ -13,6 +13,14 @@ pub struct OFF {
 }
 
 impl OFF {
+    pub fn new(opcode: Opcode, funct3: Option<Funct3>, funct7: Option<Funct7>) -> Self {
+        OFF {
+            opcode,
+            funct3,
+            funct7,
+        }
+    }
+
     pub fn opcode(&self) -> Opcode {
         self.opcode
     }
@@ -38,6 +46,13 @@ impl OFF {
 
     pub fn match_val(&self) -> u32 {
         u32::from(self.opcode) | self.funct3.map_or(0, u32::from) | self.funct7.map_or(0, u32::from)
+    }
+
+    pub fn search_key(&self) -> u16 {
+        let op: u16 = (u8::from(self.opcode) >> 2).into();
+        let f3: u16 = self.funct3.map_or(0, u8::from).into();
+        let f7: u16 = self.funct7.map_or(0, u8::from).into();
+        op | (f3 << 5) | (f7 << 8)
     }
 }
 
