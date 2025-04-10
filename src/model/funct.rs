@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::error::RISCVError;
 
-pub const FUNCT3_MASK: u32 = 0b111 << 9;
+pub const FUNCT3_MASK: u32 = 0b111 << 12;
 pub const FUNCT7_MASK: u32 = 0b1111111 << 25;
 
 /// A generic field type representing an instruction field with `BITS` bits.

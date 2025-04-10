@@ -1,5 +1,5 @@
 use crate::{
-    data::get_instruction_from_mnemonic,
+    data::get_off_from_mnemonic,
     error::RISCVError,
     instr::{BInstruction, IInstruction, JInstruction, RInstruction, SInstruction, UInstruction},
     model::{Funct3, Funct7, Immediate, InstructionFormat, Mnemonic, Opcode, Register},
@@ -54,18 +54,19 @@ impl InstructionBuilder {
         Self::default()
     }
 
-    pub fn from_mnemonic(mnemonic: Mnemonic) -> Result<Self, RISCVError> {
-        let data = get_instruction_from_mnemonic(&mnemonic)
-            .ok_or(RISCVError::BuilderError("".to_string()))?;
-        Ok(Self {
-            opcode: Some(data.opcode()),
-            funct3: data.funct3(),
-            funct7: data.funct7(),
-            rs1: None,
-            rs2: None,
-            rd: None,
-            immediate: None,
-        })
+    pub fn from_mnemonic(mnemonic: Mnemonic) -> Self {
+        match get_off_from_mnemonic(&mnemonic) {
+            Some(off) => Self {
+                opcode: Some(off.opcode()),
+                funct3: off.funct3(),
+                funct7: off.funct7(),
+                rs1: None,
+                rs2: None,
+                rd: None,
+                immediate: None,
+            },
+            None => Self::default(),
+        }
     }
 
     /// Sets the opcode for the instruction.
@@ -314,14 +315,13 @@ impl From<Instruction> for InstructionBuilder {
 
 #[cfg(test)]
 mod test {
-    // use super::*;
-    //
-    // #[test]
-    // fn test_from_mnemonic() -> Result<(), RISCVError> {
-    //     let b = InstructionBuilder::from_mnemonic("add".into())?;
-    //     assert!(b.opcode().is_ok());
-    //     assert!(b.funct3().is_ok());
-    //     assert!(b.funct7().is_ok());
-    //     Ok(())
-    // }
+    use super::*;
+
+    #[test]
+    fn test_from_mnemonic() {
+        let b = InstructionBuilder::from_mnemonic(Mnemonic::Add);
+        assert!(b.opcode().is_ok());
+        assert!(b.funct3().is_ok());
+        assert!(b.funct7().is_ok());
+    }
 }

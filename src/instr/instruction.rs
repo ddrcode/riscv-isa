@@ -2,7 +2,7 @@ use std::fmt;
 
 use super::*;
 use crate::error::RISCVError;
-use crate::model::{Funct3, Funct7, InstructionFormat, Mnemonic, Opcode, Register};
+use crate::model::{Funct3, Funct7, InstructionFormat, Mnemonic, Opcode, Opff, Register};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Instruction {
@@ -159,7 +159,8 @@ delegate_instruction_methods!(Instruction, InstructionTrait,
     fn opcode(&self) -> &Opcode,
     fn format(&self) -> &InstructionFormat,
     fn mnemonic(&self) -> Option<Mnemonic>,
-    fn immediate_bits(&self) -> u32
+    fn immediate_bits(&self) -> u32,
+    fn opff(&self) -> Opff
 );
 
 macro_rules! create_from_instruction {
@@ -178,3 +179,4 @@ create_from_instruction!(S, SInstruction);
 create_from_instruction!(B, BInstruction);
 create_from_instruction!(U, UInstruction);
 create_from_instruction!(J, JInstruction);
+

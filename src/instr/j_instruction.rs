@@ -5,7 +5,7 @@ use crate::{
     config::UNKNOWN_MNEMONIC,
     data::get_mnemonic,
     error::RISCVError,
-    model::{Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
+    model::{Immediate, InstructionFormat, Mnemonic, Opcode, Opff, RawBitsConverter, Register},
     utils::bit::{copy_bit, copy_bits},
 };
 
@@ -45,7 +45,7 @@ impl InstructionTrait for JInstruction {
     }
 
     fn mnemonic(&self) -> Option<Mnemonic> {
-        get_mnemonic(self.opcode, None, None)
+        get_mnemonic(self)
     }
 
     fn immediate_bits(&self) -> u32 {
@@ -56,6 +56,10 @@ impl InstructionTrait for JInstruction {
         copy_bits(&imm, 12, &mut res, 12, 8);
         copy_bit(&imm, 20, &mut res, 31);
         res
+    }
+
+    fn opff(&self) -> Opff {
+        Opff::new(self.opcode, None, None)
     }
 }
 

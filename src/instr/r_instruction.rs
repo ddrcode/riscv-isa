@@ -3,12 +3,7 @@ use std::fmt;
 use super::InstructionTrait;
 use crate::config::UNKNOWN_MNEMONIC;
 use crate::error::RISCVError;
-use crate::model::InstructionFormat;
-use crate::model::Mnemonic;
-use crate::model::Opcode;
-use crate::model::Register;
-use crate::model::{Funct3, Funct7};
-
+use crate::model::{Funct3, Funct7, InstructionFormat, Mnemonic, Opcode, Opff, Register};
 use crate::data::get_mnemonic;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -76,11 +71,15 @@ impl InstructionTrait for RInstruction {
     }
 
     fn mnemonic(&self) -> Option<Mnemonic> {
-        get_mnemonic(self.opcode, Some(self.funct3), Some(self.funct7))
+        get_mnemonic(self)
     }
 
     fn immediate_bits(&self) -> u32 {
         0
+    }
+
+    fn opff(&self) -> Opff {
+        Opff::new(self.opcode, Some(self.funct3), Some(self.funct7))
     }
 }
 

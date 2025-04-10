@@ -1,20 +1,17 @@
-use crate::{
-    model::{Funct3, Funct7, Opcode, FUNCT3_MASK, FUNCT7_MASK, OPCODE_MASK},
-    RISCVError,
-};
-
-use super::InstructionDef;
+use super::{Funct3, Funct7, Opcode, FUNCT3_MASK, FUNCT7_MASK, OPCODE_MASK};
+use crate::data::InstructionDef;
+use crate::RISCVError;
 
 #[derive(Debug)]
-pub struct OFF {
+pub struct Opff {
     opcode: Opcode,
     funct3: Option<Funct3>,
     funct7: Option<Funct7>,
 }
 
-impl OFF {
+impl Opff {
     pub fn new(opcode: Opcode, funct3: Option<Funct3>, funct7: Option<Funct7>) -> Self {
-        OFF {
+        Opff {
             opcode,
             funct3,
             funct7,
@@ -56,7 +53,7 @@ impl OFF {
     }
 }
 
-impl TryFrom<&InstructionDef> for OFF {
+impl TryFrom<&InstructionDef> for Opff {
     type Error = RISCVError;
 
     fn try_from(def: &InstructionDef) -> Result<Self, Self::Error> {
@@ -79,7 +76,7 @@ impl TryFrom<&InstructionDef> for OFF {
             None
         };
 
-        Ok(OFF {
+        Ok(Self {
             opcode: Opcode::try_from(def.match_val)?,
             funct3,
             funct7,
@@ -87,10 +84,10 @@ impl TryFrom<&InstructionDef> for OFF {
     }
 }
 
-impl TryFrom<InstructionDef> for OFF {
+impl TryFrom<InstructionDef> for Opff {
     type Error = RISCVError;
 
     fn try_from(def: InstructionDef) -> Result<Self, Self::Error> {
-        OFF::try_from(&def)
+        Self::try_from(&def)
     }
 }

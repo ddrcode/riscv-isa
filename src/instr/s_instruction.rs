@@ -5,7 +5,7 @@ use crate::config::UNKNOWN_MNEMONIC;
 use crate::data::get_mnemonic;
 use crate::error::RISCVError;
 use crate::model::{
-    Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register,
+    Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register, Opff
 };
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -66,12 +66,16 @@ impl InstructionTrait for SInstruction {
     }
 
     fn mnemonic(&self) -> Option<Mnemonic> {
-        get_mnemonic(self.opcode, Some(self.funct3), None)
+        get_mnemonic(self)
     }
 
     fn immediate_bits(&self) -> u32 {
         let bits = self.imm.into_raw_bits();
         ((bits & 0b11111) << 7) | ((bits >> 5) << 25)
+    }
+
+    fn opff(&self) -> Opff {
+        Opff::new(self.opcode, Some(self.funct3), None)
     }
 }
 

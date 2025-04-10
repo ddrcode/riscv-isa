@@ -4,7 +4,7 @@ use crate::{
     config::UNKNOWN_MNEMONIC,
     data::get_mnemonic,
     error::RISCVError,
-    model::{Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
+    model::{Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register, Opff},
 };
 
 use super::InstructionTrait;
@@ -45,11 +45,15 @@ impl InstructionTrait for UInstruction {
     }
 
     fn mnemonic(&self) -> Option<Mnemonic> {
-        get_mnemonic(self.opcode, None, None)
+        get_mnemonic(self)
     }
 
     fn immediate_bits(&self) -> u32 {
         self.imm.into_raw_bits() << 12
+    }
+
+    fn opff(&self) -> Opff {
+        Opff::new(self.opcode, None, None)
     }
 }
 

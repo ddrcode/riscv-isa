@@ -1,12 +1,12 @@
 use crate::{
     config::UNKNOWN_MNEMONIC,
-    data::{get_mnemonic, get_system_mnemonic},
+    data::{get_mnemonic},
     error::RISCVError,
-    model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register},
+    model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register, Opff},
 };
 use std::fmt;
 
-use super::InstructionTrait;
+use super::{Instruction, InstructionTrait};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct IInstruction {
@@ -66,12 +66,17 @@ impl InstructionTrait for IInstruction {
     }
 
     fn mnemonic(&self) -> Option<Mnemonic> {
-        get_mnemonic(self.opcode, Some(self.funct3), None)
-            .or_else(|| get_system_mnemonic(self.into()))
+        // get_mnemonic(self.opcode, Some(self.funct3), None)
+        //     .or_else(|| get_system_mnemonic(self.into()))
+        get_mnemonic(self)
     }
 
     fn immediate_bits(&self) -> u32 {
         self.imm.into_raw_bits() << 20
+    }
+
+    fn opff(&self) -> Opff {
+        Opff::new(self.opcode, Some(self.funct3), None)
     }
 }
 
@@ -117,9 +122,9 @@ impl From<&IInstruction> for u32 {
 
 impl fmt::Display for IInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(m) = get_system_mnemonic(self.into()) {
-            write!(f, "{}", m)
-        } else {
+        // if let Some(m) = get_system_mnemonic(self.into()) {
+        //     write!(f, "{}", m)
+        // } else {
             write!(
                 f,
                 "{} {}, {}, {}",
@@ -129,6 +134,6 @@ impl fmt::Display for IInstruction {
                 self.rs1,
                 self.imm
             )
-        }
+        // }
     }
 }

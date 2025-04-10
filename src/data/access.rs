@@ -1,17 +1,24 @@
-use super::{InstructionDef, INSTRUCTIONS, OFF, SYSTEM_INSTRUCTIONS};
-use crate::model::{Funct3, Funct7, Mnemonic, Opcode};
+use super::{InstructionDef, INSTRUCTIONS };
+use crate::model::{Mnemonic, Opff};
+use crate::instr::InstructionTrait;
 
-pub fn get_mnemonic(
-    opcode: Opcode,
-    funct3: Option<Funct3>,
-    funct7: Option<Funct7>,
-) -> Option<Mnemonic> {
-    let code: u16 = OFF::new(opcode, funct3, funct7).search_key();
+pub fn get_mnemonic<T: InstructionTrait + for<'a> From<&'a T>>(instr: &T) -> Option<Mnemonic> {
+    let mnem = get_mnemonic_from_opff(&instr.opff());
+    if mnem.is_some() {
+        return mnem;
+    }
+
+    let code: u32 = <&T as Into<T>>::into(instr).into();
+    None
+}
+
+pub fn get_mnemonic_from_opff(opff: &Opff) -> Option<Mnemonic> {
+    let code: u16 = opff.search_key();
 
     for def in INSTRUCTIONS.iter() {
         if let Some(key) = def.search_key {
             if key == code {
-                return Some(def.mnemonic)
+                return Some(def.mnemonic);
             }
         }
     }
@@ -19,13 +26,9 @@ pub fn get_mnemonic(
     None
 }
 
-pub fn get_system_mnemonic(instr: u32) -> Option<Mnemonic> {
-    SYSTEM_INSTRUCTIONS.get(&instr).map(|res| res.1)
-}
-
-pub fn get_instruction_from_mnemonic(mnemonic: &Mnemonic) -> Option<OFF> {
+pub fn get_off_from_mnemonic(mnemonic: &Mnemonic) -> Option<Opff> {
     let def = get_instruction_def(mnemonic);
-    OFF::try_from(def).ok()
+    Opff::try_from(def).ok()
 }
 
 pub fn get_instruction_def(mnemonic: &Mnemonic) -> &InstructionDef {
