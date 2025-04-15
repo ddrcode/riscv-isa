@@ -1,12 +1,14 @@
-use crate::{
-    config::UNKNOWN_MNEMONIC,
-    data::{get_mnemonic},
-    error::RISCVError,
-    model::{Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, RawBitsConverter, Register, Opff},
-};
 use std::fmt;
 
-use super::{Instruction, InstructionTrait};
+use super::InstructionTrait;
+use crate::{
+    config::UNKNOWN_MNEMONIC,
+    data::get_mnemonic,
+    error::RISCVError,
+    model::{
+        Funct3, Immediate, InstructionFormat, Mnemonic, Opcode, Opff, RawBitsConverter, Register,
+    },
+};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct IInstruction {
@@ -66,8 +68,6 @@ impl InstructionTrait for IInstruction {
     }
 
     fn mnemonic(&self) -> Option<Mnemonic> {
-        // get_mnemonic(self.opcode, Some(self.funct3), None)
-        //     .or_else(|| get_system_mnemonic(self.into()))
         get_mnemonic(self)
     }
 
@@ -122,18 +122,14 @@ impl From<&IInstruction> for u32 {
 
 impl fmt::Display for IInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // if let Some(m) = get_system_mnemonic(self.into()) {
-        //     write!(f, "{}", m)
-        // } else {
-            write!(
-                f,
-                "{} {}, {}, {}",
-                self.mnemonic()
-                    .map_or(UNKNOWN_MNEMONIC.to_string(), |m| m.to_string()),
-                self.rd,
-                self.rs1,
-                self.imm
-            )
-        // }
+        write!(
+            f,
+            "{} {}, {}, {}",
+            self.mnemonic()
+                .map_or(UNKNOWN_MNEMONIC.to_string(), |m| m.to_string()),
+            self.rd,
+            self.rs1,
+            self.imm
+        )
     }
 }

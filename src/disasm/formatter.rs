@@ -90,21 +90,15 @@ impl InstructionFormatter {
                 self.register(&i.rs2())
             ),
 
-            I(i) => {
-                // if get_system_mnemonic(instr.into()).is_some() {
-                //     Ok(())
-                // } else {
-                    write!(
-                        out,
-                        "{},{}{},{}{}",
-                        self.register(&i.rd()),
-                        s,
-                        self.register(&i.rs1()),
-                        s,
-                        self.number(i.imm().into())
-                    )
-                // }
-            }
+            I(i) => write!(
+                out,
+                "{},{}{},{}{}",
+                self.register(&i.rd()),
+                s,
+                self.register(&i.rs1()),
+                s,
+                self.number(i.imm().into())
+            ),
 
             S(i) => write!(
                 out,

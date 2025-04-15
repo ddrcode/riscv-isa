@@ -64,34 +64,6 @@ const toFirstUppercase = (str) => {
     return String(str[0]).toUpperCase() + String(str.slice(1));
 };
 
-// const getRustCode = entries => {
-//     const header = `
-// // this is generated code, don't modify it manually!
-//
-// use once_cell::sync::Lazy;
-// use std::collections::HashMap;
-// use crate::model::{RISCVExtension as EXT, Mnemonic as M};
-//
-// type Row = (&'static str, M, EXT, u8);
-//
-// pub (crate) static INSTRUCTIONS: Lazy<HashMap<u16, Row>> = Lazy::new(|| {
-//     HashMap::from([
-// `;
-//
-//     const footer = `
-//     ])
-// });
-// `;
-//
-//     const lines = entries
-//         .map(processDef)
-//         .reduce((str, line) => `${str}\n${line}`, "");
-//
-//
-//     return header + lines + footer;
-// }
-
-
 const generateArrayEntry = ({ name, extension, arch, mask, match, key }) => {
     const ext = toFirstUppercase(extension[0]);
     const mnemonic = toFirstUppercase(name);
@@ -108,7 +80,7 @@ const generateRustArray = entries => {
 }
 
 const generateMnemonicsEnum = entries => {
-    const code = entries.map(({name}, idx) => {
+    const code = entries.map(({ name }, idx) => {
         const mnem = toFirstUppercase(name);
         return `    ${mnem} = ${idx},`
     }).join("\n");
@@ -124,7 +96,7 @@ ${code}
 }
 
 const generateExtensionsEnum = entries => {
-    const ext = new Set(entries.map(({extension}) => toFirstUppercase(extension[0])));
+    const ext = new Set(entries.map(({ extension }) => toFirstUppercase(extension[0])));
     const code = [...ext.keys().map(e => `    ${e},`)].sort().join("\n");
     return `${GEN_CODE_WARN}
 #[non_exhaustive]
