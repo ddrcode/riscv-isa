@@ -2,13 +2,13 @@ use super::{InstructionDef, INSTRUCTIONS };
 use crate::model::{Mnemonic, Opff};
 use crate::instr::InstructionTrait;
 
-pub fn get_mnemonic<T: InstructionTrait + for<'a> From<&'a T>>(instr: &T) -> Option<Mnemonic> {
+pub fn get_mnemonic<T: InstructionTrait + From<T> + Copy>(instr: &T) -> Option<Mnemonic> {
     let mnem = get_mnemonic_from_opff(&instr.opff());
     if mnem.is_some() {
         return mnem;
     }
 
-    let code: u32 = <&T as Into<T>>::into(instr).into();
+    let _code: u32 = <T as Into<T>>::into(*instr).into();
     None
 }
 

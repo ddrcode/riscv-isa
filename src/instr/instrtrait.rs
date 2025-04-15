@@ -11,3 +11,4 @@ pub trait InstructionTrait: Into<u32>  + TryFrom<u32> {
 
     fn opff(&self) -> Opff;
 }
+
